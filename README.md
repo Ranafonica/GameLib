@@ -23,8 +23,8 @@ Para validar el correcto funcionamiento de la API de RAWG en la aplicación se r
 - Se verificó que se accede al detalle de un juego, mostrando su nombre, imagen y rating.
 
 ## Evidencias
-! [Consola con respuesta exitosa] (assets/screenshot2.png)
-! [Resultado visual de la lista de juegos] (assets/screenshot1.png)
+![Consola con respuesta exitosa](assets/screenshot2.png)  
+![Resultado visual de la lista de juegos](assets/screenshot1.png)
 
 ## Estructura del Proyecto
 
