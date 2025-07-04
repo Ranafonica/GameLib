@@ -48,7 +48,7 @@ Para validar el correcto funcionamiento de la API de RAWG en la aplicación se r
 - api_key.dart = Clave privada de la API.
 ### 📂 constants/ formatos, helpers o listas constantes (como restricciones de edad).
 - filters.dart = Listas fijas de géneros, edades, plataformas.
-### 📂 assets/screenshots
+### 📂 assets/
 - Evidencias de las pruebas de API
 
 ## Tecnologías Utilizadas
