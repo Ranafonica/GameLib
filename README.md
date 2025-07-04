@@ -27,26 +27,26 @@ El proyecto consume la API REST pública de RAWG para mostrar datos reales y act
 
 ## Estructura del Proyecto
 
- **📂 api/**
+**📂 api/**
 - rawg_api.dart = Servicio para consumir la API de RAWG
-- 📂 models/ Representa los objetos que trae la API (Game, Genre, etc.).
-  game.dart = Modelo de datos del videojuego.
-- 📂 providers/ Uno para los juegos cargados y búsqueda, otro para favoritos.
+**📂 models/ Representa los objetos que trae la API (Game, Genre, etc.).**
+- game.dart = Modelo de datos del videojuego.
+**📂 providers/ Uno para los juegos cargados y búsqueda, otro para favoritos.**
 - game_provider.dart = Estado de búsqueda y resultados.
 - favorites_provider.dart = Estado de favoritos.
-- 📂 screens/ Separar permite modularidad y navegación clara.
+**📂 screens/ Separar permite modularidad y navegación clara.**
 - home_screen.dart = Pantalla principal con juegos populares
-search_screen.dart = Pantalla con filtros y resultados de búsqueda.
-detail_screen.dart = Pantalla de detalle de un juego.
-favorites_screen.dart = Biblioteca personal (favoritos).
-📂 widgets/ Componentes reutilizables como tarjetas, buscador, filtros, etc.
-game_card.dart = Widget para mostrar juego en lista.
-filter_drawer.dart = Widget para los filtros de búsqueda.
-search_bar.dart = Widget para buscar.
-📂 utils/ API key
-api_key.dart = Clave privada de la API.
-📂 constants/ formatos, helpers o listas constantes (como restricciones de edad).
-filters.dart = Listas fijas de géneros, edades, plataformas.
+- search_screen.dart = Pantalla con filtros y resultados de búsqueda.
+- detail_screen.dart = Pantalla de detalle de un juego.
+- favorites_screen.dart = Biblioteca personal (favoritos).
+**📂 widgets/ Componentes reutilizables como tarjetas, buscador, filtros, etc.**
+- game_card.dart = Widget para mostrar juego en lista.
+- filter_drawer.dart = Widget para los filtros de búsqueda.
+- search_bar.dart = Widget para buscar.
+**📂 utils/ API key**
+- api_key.dart = Clave privada de la API.
+**📂 constants/ formatos, helpers o listas constantes (como restricciones de edad).**
+- filters.dart = Listas fijas de géneros, edades, plataformas.
 
 ## Tecnologías Utilizadas
 
