@@ -50,7 +50,9 @@ Para validar el correcto funcionamiento de la API de RAWG en la aplicación se r
 - filters.dart = Listas fijas de géneros, edades, plataformas.
 ### 📂 assets/
 - Evidencias de las pruebas de API
-
+### 📂 themes/
+- theme.dart
+- util.dart
 ## Tecnologías Utilizadas
 
 - **Flutter 3.x**
