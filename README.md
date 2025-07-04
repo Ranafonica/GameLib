@@ -27,15 +27,15 @@ El proyecto consume la API REST pública de RAWG para mostrar datos reales y act
 
 ## Estructura del Proyecto
 
-📂 api/
-rawg_api.dart = Servicio para consumir la API de RAWG
-📂 models/ Representa los objetos que trae la API (Game, Genre, etc.).
-game.dart = Modelo de datos del videojuego.
-📂 providers/ Uno para los juegos cargados y búsqueda, otro para favoritos.
-game_provider.dart = Estado de búsqueda y resultados.
-favorites_provider.dart = Estado de favoritos.
-📂 screens/ Separar permite modularidad y navegación clara.
-home_screen.dart = Pantalla principal con juegos populares
+- **📂 api/**
+- rawg_api.dart = Servicio para consumir la API de RAWG
+- 📂 models/ Representa los objetos que trae la API (Game, Genre, etc.).
+- game.dart = Modelo de datos del videojuego.
+- 📂 providers/ Uno para los juegos cargados y búsqueda, otro para favoritos.
+- game_provider.dart = Estado de búsqueda y resultados.
+- favorites_provider.dart = Estado de favoritos.
+- 📂 screens/ Separar permite modularidad y navegación clara.
+- home_screen.dart = Pantalla principal con juegos populares
 search_screen.dart = Pantalla con filtros y resultados de búsqueda.
 detail_screen.dart = Pantalla de detalle de un juego.
 favorites_screen.dart = Biblioteca personal (favoritos).
