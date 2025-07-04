@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'api/rawg_api.dart';
 import 'models/game.dart';
+import 'screens/game_detail_screen.dart';
 
 void main() {
   runApp(const GameApp());
@@ -58,6 +59,14 @@ class _GameListScreenState extends State<GameListScreen> {
                     ),
                     title: Text(game.name),
                     subtitle: Text('Rating: ${game.rating}'),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => GameDetailScreen(gameId: game.id),
+                        ),
+                      );
+                    },
                   );
                 },
               ),
