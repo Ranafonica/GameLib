@@ -21,8 +21,10 @@ Para validar el correcto funcionamiento de la API de RAWG en la aplicación se r
 - Se consumió el endpoint 'https://api.rawg.io/api/games' con una API KEY pública válida.
 - Se mostraron videojuegos populares correctamente en la aplicación.
 - Se verificó que se accede al detalle de un juego, mostrando su nombre, imagen y rating.
-[Consola con respuesta exitosa] (assets/screenshots/screenshot2.png)
-[Resultado visual de la lista de juegos] (assets/screenshots/screenshot1.png)
+[Consola con respuesta exitosa]
+(assets/screenshot2.png)
+[Resultado visual de la lista de juegos]
+(assets/screenshot1.png)
 
 ## Estructura del Proyecto
 
