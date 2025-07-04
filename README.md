@@ -27,7 +27,7 @@ El proyecto consume la API REST pública de RAWG para mostrar datos reales y act
 
 ## Estructura del Proyecto
 
-###📂 api/
+###📂 `api/`
 - rawg_api.dart = Servicio para consumir la API de RAWG
 **📂 models/ Representa los objetos que trae la API (Game, Genre, etc.).**
 - game.dart = Modelo de datos del videojuego.
