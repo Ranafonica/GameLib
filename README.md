@@ -16,11 +16,13 @@ Es una app desarrollada en Flutter que permite explorar un catálogo de videojue
 
 El proyecto consume la API REST pública de RAWG para mostrar datos reales y actualizados del mundo gamer.
 
-## Pruebas de funcionamiento y Evidencias
+## Pruebas de funcionamiento 
 Para validar el correcto funcionamiento de la API de RAWG en la aplicación se realizaron las siguientes pruebas:
 - Se consumió el endpoint 'https://api.rawg.io/api/games' con una API KEY pública válida.
 - Se mostraron videojuegos populares correctamente en la aplicación.
 - Se verificó que se accede al detalle de un juego, mostrando su nombre, imagen y rating.
+
+## Evidencias
 ! [Consola con respuesta exitosa] (assets/screenshot2.png)
 ! [Resultado visual de la lista de juegos] (assets/screenshot1.png)
 
