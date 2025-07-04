@@ -1,10 +1,10 @@
-# GameExplorer App
+# GameLib App
 
 Es una app desarrollada en Flutter que permite explorar un catálogo de videojuegos utilizando la API REST pública de RAWG(https://rawg.io/apidocs). Permitiendole al usuario cumplir el sueño de tener toda la información sobre sus títulos favoritos en un solo lugar
 
 ## Descripción
 
-**GameExplorer** es una app que permite al usuario:
+**GameLib** es una app que permite al usuario:
 
 - Buscar videojuegos por nombre
 - Filtrar búsqueda por categorías, consolas, año de lanzamiento y restricción de edad.
@@ -50,7 +50,9 @@ Para validar el correcto funcionamiento de la API de RAWG en la aplicación se r
 - filters.dart = Listas fijas de géneros, edades, plataformas.
 ### 📂 assets/
 - Evidencias de las pruebas de API
-
+### 📂 themes/
+- theme.dart
+- util.dart
 ## Tecnologías Utilizadas
 
 - **Flutter 3.x**
