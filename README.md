@@ -23,7 +23,7 @@ Para validar el correcto funcionamiento de la API de RAWG en la aplicación se r
 - Se verificó que se accede al detalle de un juego, mostrando su nombre, imagen y rating.
 
 ## Evidencias
-![Consola con respuesta exitosa](assets/screenshot2.png)  
+![Consola con respuesta exitosa](assets/screenshot2.png) 
 ![Resultado visual de la lista de juegos](assets/screenshot1.png)
 
 ## Estructura del Proyecto
@@ -56,6 +56,7 @@ Para validar el correcto funcionamiento de la API de RAWG en la aplicación se r
 
 ## Llamada a la API - `rawg_api.dart`
 GameLib realiza una solicitud GET a la API pública de "RAWG" para obtener portadas, reseñas y una sinopsis sobre videojuegos populares:
+
 ![Llamada a la API](assets/screenshot3.png)
 
 Se usa el paquete HTTP y se convierte el responde.body del JSON a una lista de objetos en Game.dart
@@ -63,16 +64,20 @@ Se usa el paquete HTTP y se convierte el responde.body del JSON a una lista de o
 ## Procesamiento de la respuesta y visualización
 
 La aplicación no imprime la respuesta de la API en la consola, ya que el procesamiento y la validación se realiza directamente en la interfaz gráfica de usuario (Main.dart). Aun así, se valida el `statusCode` en el código, y se transforma el JSON en objetos `Game` antes de mostrarlo en pantalla.
+
 ![Lista de juegos populares](assets/screenshot5.png)
 
 La lista de juegos populares se muestra en pantalla mediante un `ListView.builder`, con widgets personalizados (GameCard) que representan cada juego visualmente:
+
 ![Lista](assets/screenshot6.png)
 
 Que tras presionar cada juego de la lista se abrirá toda la información solicitada a la API del juego (Imagen, nombre, rating y descripción)
+
 ![Juego](assets/screenshot7.png)
 
 ## Modelo de datos - `models/game.dart`
 La respuesta JSON de la API se transforma en objetos del tipo `Game`, utilizando un modelo personalizado en dart, represenando la información de un videojuego de la lista traido desde la API:
+
 ![Estructura Game.dart](assets/screenshot4.png)
 
 ## Visualización de datos contextualizada
@@ -82,12 +87,16 @@ Los datos obtenidos desde la API de RAWG se presentan en la app GameLib de maner
 - Nombre del videojuego
 - Puntuación o rating
 - Descripción o Sinopsis
+- 
 ![Visualización Lista](assets/screenshot8.png)
+
 
 ![Visualización Juego](assets/screenshot9.png)
 
 Los juegos se organizan mediante un `ListView`, y cada elemento se presenta utilizando un widget personalizado (`GameCard`), lo que permite dar contexto visual a los datos sin mostrar JSON crudo. Se complementa con pantallas de detalle donde se muestra más información de cada título.
+
 ![Lista](assets/screenshot6.png)
+
 
 ![Lista de juegos populares](assets/screenshot5.png)
 
