@@ -87,7 +87,7 @@ Los datos obtenidos desde la API de RAWG se presentan en la app GameLib de maner
 - Nombre del videojuego
 - Puntuación o rating
 - Descripción o Sinopsis
-- 
+
 ![Visualización Lista](assets/screenshot8.png)
 
 
