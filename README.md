@@ -105,20 +105,20 @@ La realización de las siguientes actividades puede quedar a cambios dentro del 
 
 | Tarea                             | Detalle técnico                                                                  | Responsable     | Estado                 |
 |-----------------------------------|----------------------------------------------------------------------------------|-----------------|------------------------|
-| Implementar pantalla de detalles  | Mostrar descripción, plataformas, géneros, etc. al hacer clic en un juego        | Martín Bascuñan | En progreso            |
+| Implementar pantalla de detalles  | Mostrar descripción, plataformas, géneros, etc. al hacer clic en un juego        | Benjamín Paz    | En progreso            |
 | Agregar función de búsqueda       | Buscar juegos por nombre usando query en la API (`?search=`)                     | Martín Bascuñan | Pendiente              |
 | Incorporar filtrado               | Filtrar por año, consola o clasificación (`?platforms=`, `?dates=`, etc.)        | Martín Bascuñan | Pendiente              |
-| Crear biblioteca personal         | Permitir al usuario marcar favoritos/local storage                               | Martín Bascuñan | Pendiente              |
-| Crear Pestañas de navegación      | Permite al usuario navegar entre las pantallas creadas y por crear               | Martín Bascuñan | Pendiente              |
+| Crear biblioteca personal         | Permitir al usuario marcar favoritos/local storage                               | Benjamín Paz    | Pendiente              |
+| Crear Pestañas de navegación      | Permite al usuario navegar entre las pantallas creadas y por crear               | Benjamín Paz    | Pendiente              |
 | Persistencia de Datos             | La información quedará guardada en las sesiones                                  | Martín Bascuñan | Pendiente              |
-| Cuentas y uso de FIREBASE         | Permite al usuario crear una cuenta dentro de la app y validar su entrada        | Martín Bascuñan | Pendiente              |
+| Cuentas y uso de FIREBASE         | Permite al usuario crear una cuenta dentro de la app y validar su entrada        | Benjamín Paz    | Pendiente              |
 | Mejorar diseño visual             | Añadir íconos, márgenes, colores contextuales, tipografías                       | Martín Bascuñan | En progreso            |
 | Mostrar error de red              | Mostrar mensaje si falla la conexión a la API (`404`, `500`)                     | Martín Bascuñan | Pendiente              |
-| Validación funcional de la API    | Confirmar llamadas exitosas con respuestas válidas y uso correcto de modelos     | Martín Bascuñan | OK                     |
+| Validación funcional de la API    | Confirmar llamadas exitosas con respuestas válidas y uso correcto de modelos     | Benjamín Paz    | OK                     |
 | Evidencias en README              | Adjuntar capturas, fragmentos de código y documentación completa                 | Martín Bascuñan | OK (Actualizado)       |
-| Diagrama de Flujo                 | Adjuntar un diagrama que permita evidenciar el flujo de la app                   | Martín Bascuñan | Pendiente              |
-| Subida del APK                    | Compilar y generar `.apk` para prueba final                                      | Martín Bascuñan | Pendiente              |
-| Presentación del piloto           | Tener la app funcional, mostrar flujo y navegación en video/presentación         | Martín Bascuñan | Pendiente              |
+| Diagrama de Flujo                 | Adjuntar un diagrama que permita evidenciar el flujo de la app                   | Ambos           | Pendiente              |
+| Subida del APK                    | Compilar y generar `.apk` para prueba final                                      | Ambos           | Pendiente              |
+| Presentación del piloto           | Tener la app funcional, mostrar flujo y navegación en video/presentación         | Ambos           | Pendiente              |
 
 
 ## Tecnologías Utilizadas
