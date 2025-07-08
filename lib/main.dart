@@ -32,12 +32,12 @@ class _GameListScreenState extends State<GameListScreen> {
   }
 
   Future<void> loadGames() async {
-    final rawList = await RawgApi.fetchPopularGames();
-    setState(() {
-      games = rawList.map((json) => Game.fromJson(json)).toList();
-      isLoading = false;
-    });
-  }
+  final gameList = await RawgApi.fetchPopularGames();
+  setState(() {
+    games = gameList;
+    isLoading = false;
+  });
+}
 
   @override
   Widget build(BuildContext context) {
