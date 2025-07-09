@@ -110,9 +110,8 @@ La realización de las siguientes actividades puede quedar a cambios dentro del 
 | Incorporar filtrado               | Filtrar por año, consola o clasificación (`?platforms=`, `?dates=`, etc.)        | Martín Bascuñan | Pendiente              |
 | Crear biblioteca personal         | Permitir al usuario marcar favoritos/local storage                               | Benjamín Paz    | Pendiente              |
 | Crear Pestañas de navegación      | Permite al usuario navegar entre las pantallas creadas y por crear               | Benjamín Paz    | Pendiente              |
-| Persistencia de Datos             | La información quedará guardada en las sesiones                                  | Martín Bascuñan | Pendiente              |
-| Implementar Persistencia          | Preferencias en dispositivo para agregar las consolas del usuario                | Ambos           | Pendiente              |
-| Swiper en Homepage                | Implementar una lista lateral con Swiper que facilite la visual de los juegos    | Benjamín Paz    | Pendiente              |
+| Persistencia de Datos             | La información quedará guardada en las sesiones                                  | Martín Bascuñan | OK                     |
+| Swiper en Homepage                | Implementar una lista lateral con Swiper que facilite la visual de los juegos    | Benjamín Paz    | OK                     |
 | Mejorar diseño visual             | Añadir íconos, márgenes, colores contextuales, tipografías                       | Martín Bascuñan | En progreso            |
 | Mostrar error de red              | Mostrar mensaje si falla la conexión a la API (`404`, `500`)                     | Martín Bascuñan | Pendiente              |
 | Validación funcional de la API    | Confirmar llamadas exitosas con respuestas válidas y uso correcto de modelos     | Benjamín Paz    | OK                     |
