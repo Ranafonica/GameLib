@@ -44,28 +44,33 @@ Para validar el correcto funcionamiento de la API de RAWG en la aplicación se r
 - `home_screen.dart` – Pantalla principal con juegos populares.
 - `search_screen.dart` – Pantalla con filtros y resultados de búsqueda.
 - `detail_screen.dart` – Pantalla de detalle de un juego.
-- `favorites_screen.dart` – Biblioteca personal (favoritos).  
+- `favorites_screen.dart` – Biblioteca personal (favoritos).
+- `platform_selection_screen.dart` – Pantalla para seleccionar plataforma.
+- `about_screen.dart` – Pantalla de créditos / información de la app.  
 *(Separar permite modularidad y navegación clara.)*
 
 ### 📂 widgets/
 - `game_card.dart` – Widget para mostrar juego en lista.
 - `filter_drawer.dart` – Widget para los filtros de búsqueda.
-- `search_bar.dart` – Widget para buscar.  
+- `search_bar.dart` – Barra de búsqueda.
+- `platform_button.dart` – Botón reutilizable para plataformas.
+- `custom_text_styles.dart` – Definiciones de estilo de texto.  
 *(Componentes reutilizables como tarjetas, buscador, filtros, etc.)*
 
 ### 📂 utils/
 - `api_key.dart` – Clave privada de la API.
 
 ### 📂 constants/
-- `filters.dart` – Listas fijas de géneros, edades, plataformas.  
-*(Formatos, helpers o listas constantes como restricciones de edad.)*
-
-### 📂 assets/
-- Evidencias de las pruebas de API.
-*(Screenshots de las evidencias, Logo e implementaciones futuras.)*
+- `filters.dart` – Listas fijas de géneros, edades, plataformas.
+- 
 ### 📂 themes/
 - `theme.dart` – Estilos personalizados.
 - `util.dart` – Funciones auxiliares para el tema.
+  
+### 📂 assets/
+- Evidencias de las pruebas de API.
+*(Screenshots de las evidencias, Logo e implementaciones futuras.)*
+
 
 
 ## Llamada a la API - `rawg_api.dart`
