@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:proyecto3/services/shared_preferences_services.dart';
+import 'package:proyecto3/Services/shared_preferences_services.dart';
 import 'package:proyecto3/api/rawg_api.dart';
 import 'package:proyecto3/models/game.dart';
 import 'package:proyecto3/screens/game_detail_screen.dart';

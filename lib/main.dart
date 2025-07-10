@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:proyecto3/services/shared_preferences_services.dart';
+import 'package:proyecto3/Services/shared_preferences_services.dart';
 import 'package:proyecto3/screens/home_page.dart';
 import 'package:proyecto3/screens/favorites_screen.dart';
 import 'package:proyecto3/screens/about_screen.dart'; // Asegúrate de importar AboutScreen
@@ -49,11 +49,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   @override
   void initState() {
     super.initState();
-    _darkMode = widget.initialDarkMode;
-    _initializeScreens();
-  }
-
-  void _initializeScreens() {
     _screens = [
       HomePage(prefsService: widget.prefsService),
       FavoritesScreen(prefsService: widget.prefsService),

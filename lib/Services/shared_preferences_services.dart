@@ -6,8 +6,6 @@ class SharedPreferencesService {
   static const String _firstTimeKey = 'first_time';
   static const String _favoritesKey = 'favorite_games';
   static late final SharedPreferencesService prefsService; // Instancia estática
-  static const String _darkModeKey = 'dark_mode';
-  static const String _notificationsKey = 'notifications_enabled';
 
   final SharedPreferences _prefs;
 
@@ -76,22 +74,5 @@ class SharedPreferencesService {
   Future<bool> isFavoriteGame(int gameId) async {
     final favorites = await getFavoriteGames();
     return favorites.any((game) => game.id == gameId);
-  }
-
-  // Nuevos métodos para preferencias
-  Future<bool> getDarkMode() async {
-    return _prefs.getBool(_darkModeKey) ?? false;
-  }
-
-  Future<void> setDarkMode(bool value) async {
-    await _prefs.setBool(_darkModeKey, value);
-  }
-
-  Future<bool> getNotificationsEnabled() async {
-    return _prefs.getBool(_notificationsKey) ?? true;
-  }
-
-  Future<void> setNotificationsEnabled(bool value) async {
-    await _prefs.setBool(_notificationsKey, value);
   }
 }

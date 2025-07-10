@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:proyecto3/services/shared_preferences_services.dart';
+import 'package:proyecto3/Services/shared_preferences_services.dart';
 import 'package:proyecto3/models/game.dart';
 import '../utils/api_key.dart';
 
