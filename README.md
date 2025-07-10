@@ -62,7 +62,7 @@ Para validar el correcto funcionamiento de la API de RAWG en la aplicación se r
 
 ### 📂 constants/
 - `filters.dart` – Listas fijas de géneros, edades, plataformas.
-- 
+  
 ### 📂 themes/
 - `theme.dart` – Estilos personalizados.
 - `util.dart` – Funciones auxiliares para el tema.
