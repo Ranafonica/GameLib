@@ -277,7 +277,9 @@ class _HomePageState extends State<HomePage> {
                 Text(
                   game.name,
                   maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  overflow:
+                      TextOverflow
+                          .ellipsis, // Corregir: usar overflow en lugar de max
                   style: const TextStyle(fontSize: 12),
                 ),
                 Text(
