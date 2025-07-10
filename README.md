@@ -26,33 +26,47 @@ Para validar el correcto funcionamiento de la API de RAWG en la aplicación se r
 ![Consola con respuesta exitosa](assets/screenshot2.png) 
 ![Resultado visual de la lista de juegos](assets/screenshot1.png)
 
-## Estructura del Proyecto
+## 📁 Estructura del Proyecto
 
 ### 📂 api/
-- rawg_api.dart = Servicio para consumir la API de RAWG
-### 📂 models/ Representa los objetos que trae la API (Game, Genre, etc.).
-- game.dart = Modelo de datos del videojuego.
-### 📂 providers/ Uno para los juegos cargados y búsqueda, otro para favoritos.
-- game_provider.dart = Estado de búsqueda y resultados.
-- favorites_provider.dart = Estado de favoritos.
-### 📂 screens/ Separar permite modularidad y navegación clara.
-- home_screen.dart = Pantalla principal con juegos populares
-- search_screen.dart = Pantalla con filtros y resultados de búsqueda.
-- detail_screen.dart = Pantalla de detalle de un juego.
-- favorites_screen.dart = Biblioteca personal (favoritos).
-### 📂 widgets/ Componentes reutilizables como tarjetas, buscador, filtros, etc.
-- game_card.dart = Widget para mostrar juego en lista.
-- filter_drawer.dart = Widget para los filtros de búsqueda.
-- search_bar.dart = Widget para buscar.
-### 📂 utils/ API key
-- api_key.dart = Clave privada de la API.
-### 📂 constants/ formatos, helpers o listas constantes (como restricciones de edad).
-- filters.dart = Listas fijas de géneros, edades, plataformas.
+- `rawg_api.dart` – Servicio para consumir la API de RAWG.
+
+### 📂 models/ 
+- `game.dart` – Modelo de datos del videojuego.  
+*(Representa los objetos que trae la API: Game, Genre, etc.)*
+
+### 📂 providers/
+- `game_provider.dart` – Estado de búsqueda y resultados.
+- `favorites_provider.dart` – Estado de favoritos.  
+*(Uno para los juegos cargados y búsqueda, otro para favoritos.)*
+
+### 📂 screens/
+- `home_screen.dart` – Pantalla principal con juegos populares.
+- `search_screen.dart` – Pantalla con filtros y resultados de búsqueda.
+- `detail_screen.dart` – Pantalla de detalle de un juego.
+- `favorites_screen.dart` – Biblioteca personal (favoritos).  
+*(Separar permite modularidad y navegación clara.)*
+
+### 📂 widgets/
+- `game_card.dart` – Widget para mostrar juego en lista.
+- `filter_drawer.dart` – Widget para los filtros de búsqueda.
+- `search_bar.dart` – Widget para buscar.  
+*(Componentes reutilizables como tarjetas, buscador, filtros, etc.)*
+
+### 📂 utils/
+- `api_key.dart` – Clave privada de la API.
+
+### 📂 constants/
+- `filters.dart` – Listas fijas de géneros, edades, plataformas.  
+*(Formatos, helpers o listas constantes como restricciones de edad.)*
+
 ### 📂 assets/
-- Evidencias de las pruebas de API
+- Evidencias de las pruebas de API.
+*(Screenshots de las evidencias, Logo e implementaciones futuras.)*
 ### 📂 themes/
-- theme.dart → Estilos personalizados.
-- util.dart → Funciones auxiliares para el tema.
+- `theme.dart` – Estilos personalizados.
+- `util.dart` – Funciones auxiliares para el tema.
+
 
 ## Llamada a la API - `rawg_api.dart`
 GameLib realiza una solicitud GET a la API pública de "RAWG" para obtener portadas, reseñas y una sinopsis sobre videojuegos populares:
