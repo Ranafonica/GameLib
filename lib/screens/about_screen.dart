@@ -1,31 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:proyecto3/services/shared_preferences_services.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+import 'package:proyecto3/Services/shared_preferences_services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class AboutScreen extends StatefulWidget {
+class AboutScreen extends StatelessWidget {
   final SharedPreferencesService prefsService;
 
   const AboutScreen({super.key, required this.prefsService});
-
-  @override
-  State<AboutScreen> createState() => _AboutScreenState();
-}
-
-class _AboutScreenState extends State<AboutScreen> {
-  String _appVersion = '';
-
-  @override
-  void initState() {
-    super.initState();
-    _loadAppInfo();
-  }
-
-  Future<void> _loadAppInfo() async {
-    final packageInfo = await PackageInfo.fromPlatform();
-    setState(() {
-      _appVersion = 'Versión ${packageInfo.version}';
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,35 +13,136 @@ class _AboutScreenState extends State<AboutScreen> {
       appBar: AppBar(
         title: const Text('Acerca de'),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'RAWG Game Explorer',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            Text(_appVersion),
-            const SizedBox(height: 20),
-            const Text(
-              'Esta aplicación utiliza la API de RAWG para mostrar información sobre videojuegos.',
-              style: TextStyle(fontSize: 16),
+            const Center(
+              child: CircleAvatar(
+                radius: 50,
+                backgroundImage: AssetImage('assets/app_icon.png'), // Asegúrate de tener este asset
+              ),
             ),
             const SizedBox(height: 20),
-            const Text(
-              'Desarrollado por: [Tu Nombre]',
-              style: TextStyle(fontSize: 16),
+            const Center(
+              child: Text(
+                'GameLib',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
-            const Spacer(),
+            const SizedBox(height: 8),
+            const Center(
+              child: Text(
+                'Versión 1.0.0',
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+            const SizedBox(height: 30),
+            const Text(
+              'Descripción',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Aplicación para explorar videojuegos utilizando la API de RAWG.io. '
+              'Puedes buscar juegos, ver detalles, filtrar por plataformas y guardar tus favoritos.',
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Desarrollado por',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text('Martin Bascuñan y Benjamín Paz'),
+            const SizedBox(height: 20),
+            const Text(
+              'Tecnologías utilizadas',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text('Flutter, Dart, RAWG API, SharedPreferences'),
+            const SizedBox(height: 20),
+            const Text(
+              'Enlaces',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            _buildLinkTile(
+              context,
+              icon: Icons.public,
+              title: 'RAWG API',
+              url: 'https://rawg.io/apidocs',
+            ),
+            _buildLinkTile(
+              context,
+              icon: Icons.code,
+              title: 'Repositorio del proyecto',
+              url: 'https://github.com/Ranafonica/GameLib',
+            ),
+            _buildLinkTile(
+              context,
+              icon: Icons.bug_report,
+              title: 'Reportar un problema',
+              url: 'https://github.com/tu_usuario/tu_repositorio/issues',
+            ),
+            const SizedBox(height: 30),
             Center(
-              child: ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Volver'),
+              child: Text(
+                '© ${DateTime.now().year} IDVRV Utal',
+                style: const TextStyle(color: Colors.grey),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildLinkTile(BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String url,
+  }) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title),
+      onTap: () => _launchUrl(context, url),
+    );
+  }
+
+  Future<void> _launchUrl(BuildContext context, String url) async {
+    try {
+      final uri = Uri.parse(url);
+      if (!await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication, // Abre en navegador externo
+      )) {
+        _showErrorSnackbar(context, 'No se pudo abrir $url');
+      }
+    } catch (e) {
+      _showErrorSnackbar(context, 'Error al abrir el enlace: ${e.toString()}');
+    }
+  }
+
+  void _showErrorSnackbar(BuildContext context, String message) {
+        content: Text(message),
+        backgroundColor: Colors.red,
       ),
     );
   }
