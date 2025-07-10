@@ -51,8 +51,8 @@ Para validar el correcto funcionamiento de la API de RAWG en la aplicación se r
 ### 📂 assets/
 - Evidencias de las pruebas de API
 ### 📂 themes/
-- theme.dart
-- util.dart
+- theme.dart → Estilos personalizados.
+- util.dart → Funciones auxiliares para el tema.
 
 ## Llamada a la API - `rawg_api.dart`
 GameLib realiza una solicitud GET a la API pública de "RAWG" para obtener portadas, reseñas y una sinopsis sobre videojuegos populares:
