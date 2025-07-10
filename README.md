@@ -119,6 +119,20 @@ Los juegos se organizan mediante un `ListView`, y cada elemento se presenta util
 
 ![Lista de juegos populares](assets/screenshot5.png)
 
+## Tema Escogido
+
+GameLib cuenta con un diseño personalizado que adapta su apariencia al modo claro u oscuro escogido en el apartado de "Preferencias". Se ha aplicado un tema consistente a la identidad digital del proyecto con tipografías, colores y espaciado uniforme relacionados al mundo de los videojuegos para mejorar la experiencia visual.
+
+### Modo Claro
+
+![Modo Claro](assets/light_home.png)
+
+### Modo Oscuro
+
+![Modo Oscuro](assets/dark_home.png)
+
+Los temas se gestionan mediante `theme.dart` y `util.dart`, permitiendo un cambio automático (al entrar) o manual (tras ingresar a las "Preferencias") según las preferencias del usuario o del sistema en donde se ejecute la aplicación.
+
 ## Lista de Actividades Pendientes para el Cierre del Piloto
 La realización de las siguientes actividades puede quedar a cambios dentro del desarrollo de la aplicación, por lo que esta es solamente una referencia actual de las decisiones más bien no un mandato
 
