@@ -23,7 +23,7 @@ class _HomePageState extends State<HomePage> {
   List<Game> bestOf2024 = [];
   List<Game> topRated = [];
   bool isLoading = true;
-  
+
   // Variables para búsqueda
   List<Game> searchResults = [];
   bool isSearching = false;
@@ -75,7 +75,13 @@ class _HomePageState extends State<HomePage> {
         isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al cargar juegos: ${e.toString()}')),
+        SnackBar(
+          content: Text('Error al cargar juegos: ${e.toString()}'),
+          backgroundColor:
+              Theme.of(
+                context,
+              ).colorScheme.error, // Usando color de error del tema
+        ),
       );
     }
   }
@@ -111,7 +117,13 @@ class _HomePageState extends State<HomePage> {
         isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al buscar: ${e.toString()}')),
+        SnackBar(
+          content: Text('Error al buscar: ${e.toString()}'),
+          backgroundColor:
+              Theme.of(
+                context,
+              ).colorScheme.error, // Usando color de error del tema
+        ),
       );
     }
   }
@@ -143,24 +155,47 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme =
+        Theme.of(context).colorScheme; // Accediendo al ColorScheme del tema
+
     if (isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return Scaffold(
+        backgroundColor:
+            colorScheme
+                .surface, // Fondo del Scaffold usando el color de superficie
+        body: Center(
+          child: CircularProgressIndicator(
+            color: colorScheme.primary, // Indicador de carga con color primario
+          ),
+        ),
+      );
     }
 
     return Scaffold(
+      backgroundColor:
+          colorScheme
+              .surface, // Fondo del Scaffold usando el color de superficie
       appBar: AppBar(
         title: const Text('Explorador de Juegos'),
+        backgroundColor:
+            colorScheme.primary, // Fondo de la AppBar con color primario
+        foregroundColor:
+            colorScheme.onPrimary, // Color del texto/iconos en la AppBar
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings),
+            icon: Icon(
+              Icons.settings,
+              color: colorScheme.onPrimary,
+            ), // Color del ícono de ajustes
             onPressed: () async {
               await Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => PlatformSelectionScreen(
-                    prefsService: widget.prefsService,
-                    isInitialSetup: false,
-                  ),
+                  builder:
+                      (_) => PlatformSelectionScreen(
+                        prefsService: widget.prefsService,
+                        isInitialSetup: false,
+                      ),
                 ),
               );
               setState(() {
@@ -181,11 +216,7 @@ class _HomePageState extends State<HomePage> {
               onSubmitted: _searchGames,
               onClear: _clearSearch,
             ),
-
-            if (isSearching)
-              _buildSearchResults()
-            else
-              _buildNormalContent(),
+            if (isSearching) _buildSearchResults() else _buildNormalContent(),
           ],
         ),
       ),
@@ -193,18 +224,32 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildSearchResults() {
+    final colorScheme =
+        Theme.of(context).colorScheme; // Accediendo al ColorScheme
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Resultados de búsqueda',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: colorScheme.onSurface, // Color del texto usando onSurface
+            ),
           ),
           const SizedBox(height: 16),
           if (searchResults.isEmpty)
-            const Center(child: Text('No se encontraron resultados'))
+            Center(
+              child: Text(
+                'No se encontraron resultados',
+                style: TextStyle(
+                  color: colorScheme.onSurfaceVariant,
+                ), // Color para texto secundario
+              ),
+            )
           else
             ListView.builder(
               shrinkWrap: true,
@@ -216,11 +261,26 @@ class _HomePageState extends State<HomePage> {
                   leading: Image.network(
                     game.imageUrl,
                     width: 50,
-                    errorBuilder: (_, __, ___) =>
-                        const Icon(Icons.videogame_asset),
+                    errorBuilder:
+                        (_, __, ___) => Icon(
+                          Icons.videogame_asset,
+                          color:
+                              colorScheme
+                                  .primary, // Ícono de error con color primario
+                        ),
                   ),
-                  title: Text(game.name),
-                  subtitle: Text('Rating: ${game.rating}'),
+                  title: Text(
+                    game.name,
+                    style: TextStyle(
+                      color: colorScheme.onSurface,
+                    ), // Color del título
+                  ),
+                  subtitle: Text(
+                    'Rating: ${game.rating}',
+                    style: TextStyle(
+                      color: colorScheme.onSurfaceVariant,
+                    ), // Color del subtítulo
+                  ),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -238,6 +298,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildNormalContent() {
+    final colorScheme =
+        Theme.of(context).colorScheme; // Accediendo al ColorScheme
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -257,15 +320,22 @@ class _HomePageState extends State<HomePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) =>
-                      GameListScreen(prefsService: widget.prefsService),
+                  builder:
+                      (_) => GameListScreen(prefsService: widget.prefsService),
                 ),
               );
             },
-            child: const Text('Ver todos los juegos'),
             style: ElevatedButton.styleFrom(
               minimumSize: const Size(double.infinity, 50),
+              backgroundColor:
+                  colorScheme.primary, // Fondo del botón con color primario
+              foregroundColor:
+                  colorScheme.onPrimary, // Texto del botón con color onPrimary
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8), // Bordes redondeados
+              ),
             ),
+            child: const Text('Ver todos los juegos'),
           ),
         ),
       ],
@@ -273,16 +343,26 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildSectionTitle(String title) {
+    final colorScheme =
+        Theme.of(context).colorScheme; // Accediendo al ColorScheme
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Text(
         title,
-        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: colorScheme.onSurface, // Color del título de sección
+        ),
       ),
     );
   }
 
   Widget _buildGameSwiper(List<Game> games) {
+    final colorScheme =
+        Theme.of(context).colorScheme; // Accediendo al ColorScheme
+
     return SizedBox(
       height: 200,
       child: Swiper(
@@ -302,30 +382,50 @@ class _HomePageState extends State<HomePage> {
                 borderRadius: BorderRadius.circular(10.0),
               ),
               elevation: 4,
+              color:
+                  colorScheme
+                      .surfaceContainer, // Fondo de la tarjeta usando surfaceContainer
               child: Stack(
                 fit: StackFit.expand,
                 children: [
                   game.imageUrl.isNotEmpty
                       ? ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Image.network(
-                            game.imageUrl,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) =>
-                                const Icon(Icons.videogame_asset),
-                          ),
-                        )
-                      : Container(
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.videogame_asset, size: 50),
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.network(
+                          game.imageUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder:
+                              (_, __, ___) => Icon(
+                                Icons.videogame_asset,
+                                color:
+                                    colorScheme
+                                        .primary, // Ícono de error con color primario
+                              ),
                         ),
+                      )
+                      : Container(
+                        color:
+                            colorScheme
+                                .surfaceContainerLow, // Fondo alternativo para tarjetas sin imagen
+                        child: Icon(
+                          Icons.videogame_asset,
+                          size: 50,
+                          color:
+                              colorScheme.primary, // Ícono con color primario
+                        ),
+                      ),
                   Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      gradient: const LinearGradient(
+                      gradient: LinearGradient(
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
-                        colors: [Colors.black87, Colors.transparent],
+                        colors: [
+                          colorScheme.scrim.withOpacity(
+                            0.7,
+                          ), // Usando scrim para el gradiente
+                          Colors.transparent,
+                        ],
                       ),
                     ),
                   ),
@@ -335,8 +435,10 @@ class _HomePageState extends State<HomePage> {
                     right: 10,
                     child: Text(
                       game.name,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color:
+                            colorScheme
+                                .onSurface, // Color del texto en la tarjeta
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -358,6 +460,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildHorizontalGameList(List<Game> games) {
+    final colorScheme =
+        Theme.of(context).colorScheme; // Accediendo al ColorScheme
+
     return SizedBox(
       height: 150,
       child: ListView.builder(
@@ -386,10 +491,18 @@ class _HomePageState extends State<HomePage> {
                         game.imageUrl,
                         fit: BoxFit.cover,
                         width: double.infinity,
-                        errorBuilder: (_, __, ___) => Container(
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.videogame_asset),
-                        ),
+                        errorBuilder:
+                            (_, __, ___) => Container(
+                              color:
+                                  colorScheme
+                                      .surfaceContainerLow, // Fondo para imágenes fallidas
+                              child: Icon(
+                                Icons.videogame_asset,
+                                color:
+                                    colorScheme
+                                        .primary, // Ícono con color primario
+                              ),
+                            ),
                       ),
                     ),
                   ),
@@ -399,11 +512,19 @@ class _HomePageState extends State<HomePage> {
                   game.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 12),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: colorScheme.onSurface, // Color del texto del nombre
+                  ),
                 ),
                 Text(
                   '⭐ ${game.rating.toStringAsFixed(1)}',
-                  style: const TextStyle(fontSize: 12),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color:
+                        colorScheme
+                            .onSurfaceVariant, // Color del texto de rating
+                  ),
                 ),
               ],
             ),

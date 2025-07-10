@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:proyecto3/models/game.dart';
 
@@ -5,6 +6,8 @@ class SharedPreferencesService {
   static const String _platformsKey = 'selected_platforms';
   static const String _firstTimeKey = 'first_time';
   static const String _favoritesKey = 'favorite_games';
+  static const String _themeModeKey =
+      'theme_mode'; // Clave para el modo de tema
   static late final SharedPreferencesService prefsService; // Instancia estática
 
   final SharedPreferences _prefs;
@@ -74,5 +77,36 @@ class SharedPreferencesService {
   Future<bool> isFavoriteGame(int gameId) async {
     final favorites = await getFavoriteGames();
     return favorites.any((game) => game.id == gameId);
+  }
+
+  // Guardar preferencia de ThemeMode
+  Future<void> setThemeMode(ThemeMode themeMode) async {
+    String themeString;
+    switch (themeMode) {
+      case ThemeMode.light:
+        themeString = 'light';
+        break;
+      case ThemeMode.dark:
+        themeString = 'dark';
+        break;
+      case ThemeMode.system:
+        themeString = 'system';
+        break;
+    }
+    await _prefs.setString(_themeModeKey, themeString);
+  }
+
+  // Obtener preferencia de ThemeMode
+  Future<ThemeMode> getThemeMode() async {
+    final themeString = _prefs.getString(_themeModeKey);
+    switch (themeString) {
+      case 'light':
+        return ThemeMode.light;
+      case 'dark':
+        return ThemeMode.dark;
+      case 'system':
+      default:
+        return ThemeMode.system;
+    }
   }
 }
