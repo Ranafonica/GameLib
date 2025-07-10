@@ -36,15 +36,10 @@ Para validar el correcto funcionamiento de la API de RAWG en la aplicación se r
 - game_provider.dart = Estado de búsqueda y resultados.
 - favorites_provider.dart = Estado de favoritos.
 ### 📂 screens/ Separar permite modularidad y navegación clara.
-- home_screen.dart = Pantalla principal con juegos populares.
+- home_screen.dart = Pantalla principal con juegos populares
 - search_screen.dart = Pantalla con filtros y resultados de búsqueda.
-- game_detail_screen.dart = Pantalla de detalle de un juego.
-- game_list_screen.dart = Pantalla que muestra una lista de juegos populares y todos los juegos.
+- detail_screen.dart = Pantalla de detalle de un juego.
 - favorites_screen.dart = Biblioteca personal (favoritos).
-- plataform_selection_screen.dart = Pantalla que muestra las consolas que tiene el usuario para filtrar juegos.
-- search_screen.dart = pantalla que tiene el fin de buscar un juego por su nombre.
-### 📂 Services/Servicios
-- shared_preferences_services.dart = Clase que se encarga de la persistencia de la aplicacion.
 ### 📂 widgets/ Componentes reutilizables como tarjetas, buscador, filtros, etc.
 - game_card.dart = Widget para mostrar juego en lista.
 - filter_drawer.dart = Widget para los filtros de búsqueda.
@@ -110,11 +105,11 @@ La realización de las siguientes actividades puede quedar a cambios dentro del 
 
 | Tarea                             | Detalle técnico                                                                  | Responsable     | Estado                 |
 |-----------------------------------|----------------------------------------------------------------------------------|-----------------|------------------------|
-| Implementar pantalla de detalles  | Mostrar descripción, plataformas, géneros, etc. al hacer clic en un juego        | Benjamín Paz    | OK                     |
-| Agregar función de búsqueda       | Buscar juegos por nombre usando query en la API (`?search=`)                     | Martín Bascuñan | OK                     |
-| Incorporar filtrado               | Filtrar por año, consola o clasificación (`?platforms=`, `?dates=`, etc.)        | Martín Bascuñan | OK                     |
-| Crear biblioteca personal         | Permitir al usuario marcar favoritos/local storage                               | Benjamín Paz    | OK                     |
-| Crear navegación                  | Permite al usuario navegar entre las pantallas creadas y por crear               | Benjamín Paz    | OK                     |
+| Implementar pantalla de detalles  | Mostrar descripción, plataformas, géneros, etc. al hacer clic en un juego        | Benjamín Paz    | En progreso            |
+| Agregar función de búsqueda       | Buscar juegos por nombre usando query en la API (`?search=`)                     | Martín Bascuñan | Pendiente              |
+| Incorporar filtrado               | Filtrar por año, consola o clasificación (`?platforms=`, `?dates=`, etc.)        | Martín Bascuñan | Pendiente              |
+| Crear biblioteca personal         | Permitir al usuario marcar favoritos/local storage                               | Benjamín Paz    | Pendiente              |
+| Crear Pestañas de navegación      | Permite al usuario navegar entre las pantallas creadas y por crear               | Benjamín Paz    | Pendiente              |
 | Persistencia de Datos             | La información quedará guardada en las sesiones                                  | Martín Bascuñan | OK                     |
 | Swiper en Homepage                | Implementar una lista lateral con Swiper que facilite la visual de los juegos    | Benjamín Paz    | OK                     |
 | Mejorar diseño visual             | Añadir íconos, márgenes, colores contextuales, tipografías                       | Martín Bascuñan | En progreso            |
