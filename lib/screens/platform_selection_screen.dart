@@ -23,6 +23,23 @@ class _PlatformSelectionScreenState extends State<PlatformSelectionScreen> {
   List<int> selectedPlatforms = [];
 
   @override
+  void initState() {
+    super.initState();
+    // Cargar plataformas seleccionadas desde SharedPreferences
+    _loadSelectedPlatforms();
+  }
+
+  // Cargar plataformas seleccionadas
+  Future<void> _loadSelectedPlatforms() async {
+    final platforms = await widget.prefsService.getSelectedPlatforms();
+    if (platforms != null) {
+      setState(() {
+        selectedPlatforms = platforms;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar:

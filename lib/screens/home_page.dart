@@ -55,19 +55,25 @@ class _HomePageState extends State<HomePage> {
         ordering: '-rating', // Ordenar por rating descendente
       );
 
-      setState(() {
-        popularGames = popular.take(10).toList();
-        bestOf2024 = best2024.take(10).toList();
-        topRated = rated.take(10).toList();
-        isLoading = false;
-      });
+      // Verificar si el widget está montado antes de actualizar el estado
+      if (mounted) {
+        setState(() {
+          popularGames = popular.take(10).toList();
+          bestOf2024 = best2024.take(10).toList();
+          topRated = rated.take(10).toList();
+          isLoading = false;
+        });
+      }
     } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al cargar juegos: ${e.toString()}')),
-      );
+      // Verificar si el widget está montado antes de actualizar el estado
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al cargar juegos: ${e.toString()}')),
+        );
+      }
     }
   }
 
