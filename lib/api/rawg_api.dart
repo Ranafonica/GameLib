@@ -43,4 +43,35 @@ class RawgApi {
       );
     }
   }
+
+  static Future<List<Game>> searchGames({
+    required String query,
+    List<int>? platformIds,
+  }) async {
+    String url = '$baseUrl/games?key=$rawgApiKey&page_size=50&search=$query';
+
+    if (platformIds != null && platformIds.isNotEmpty) {
+      url += '&platforms=${platformIds.join(',')}';
+    }
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final allGames =
+          (data['results'] as List).map((json) => Game.fromJson(json)).toList();
+
+      if (platformIds != null && platformIds.isNotEmpty) {
+        return allGames
+            .where(
+              (game) => platformIds.any((id) => game.platforms.contains(id)),
+            )
+            .toList();
+      }
+
+      return allGames;
+    } else {
+      throw Exception('Error al buscar juegos: ${response.statusCode}');
+    }
+  }
 }

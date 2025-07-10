@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper_view/flutter_swiper_view.dart';
 import 'package:proyecto3/Services/shared_preferences_services.dart';
@@ -6,6 +7,7 @@ import 'package:proyecto3/models/game.dart';
 import 'package:proyecto3/screens/game_detail_screen.dart';
 import 'package:proyecto3/screens/game_list_screen.dart';
 import 'package:proyecto3/screens/platform_selection_screen.dart';
+import 'package:proyecto3/widgets/search_bar.dart';
 
 class HomePage extends StatefulWidget {
   final SharedPreferencesService prefsService;
@@ -21,6 +23,13 @@ class _HomePageState extends State<HomePage> {
   List<Game> bestOf2024 = [];
   List<Game> topRated = [];
   bool isLoading = true;
+  
+  // Variables para búsqueda
+  List<Game> searchResults = [];
+  bool isSearching = false;
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
+  Timer? _debounceTimer;
 
   @override
   void initState() {
@@ -28,53 +37,108 @@ class _HomePageState extends State<HomePage> {
     _loadGames();
   }
 
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    _debounceTimer?.cancel();
+    super.dispose();
+  }
+
   Future<void> _loadGames() async {
     try {
       final List<int>? selectedPlatforms =
           await widget.prefsService.getSelectedPlatforms();
 
-      // Obtener juegos populares
       final popular = await RawgApi.fetchPopularGames(
         platformIds: selectedPlatforms,
       );
 
-      // Obtener mejores de 2024 (filtrando por fecha de lanzamiento)
       final allGames = await RawgApi.fetchPopularGames(
         platformIds: selectedPlatforms,
       );
-      final best2024 =
-          allGames.where((game) {
-            // Aquí deberías implementar lógica para filtrar por fecha
-            // Esto es un placeholder - necesitarías modificar la API o el modelo
-            return game.rating > 4.5; // Ejemplo simple
-          }).toList();
+      final best2024 = allGames.where((game) => game.rating > 4.5).toList();
 
-      // Obtener mejor valorados
       final rated = await RawgApi.fetchPopularGames(
         platformIds: selectedPlatforms,
-        ordering: '-rating', // Ordenar por rating descendente
+        ordering: '-rating',
       );
 
-      // Verificar si el widget está montado antes de actualizar el estado
-      if (mounted) {
-        setState(() {
-          popularGames = popular.take(10).toList();
-          bestOf2024 = best2024.take(10).toList();
-          topRated = rated.take(10).toList();
-          isLoading = false;
-        });
-      }
+      setState(() {
+        popularGames = popular.take(10).toList();
+        bestOf2024 = best2024.take(10).toList();
+        topRated = rated.take(10).toList();
+        isLoading = false;
+      });
     } catch (e) {
-      // Verificar si el widget está montado antes de actualizar el estado
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al cargar juegos: ${e.toString()}')),
-        );
-      }
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al cargar juegos: ${e.toString()}')),
+      );
     }
+  }
+
+  Future<void> _searchGames(String query) async {
+    if (query.isEmpty) {
+      setState(() {
+        isSearching = false;
+        searchResults.clear();
+      });
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+      isSearching = true;
+    });
+
+    try {
+      final List<int>? selectedPlatforms =
+          await widget.prefsService.getSelectedPlatforms();
+      final results = await RawgApi.searchGames(
+        query: query,
+        platformIds: selectedPlatforms,
+      );
+
+      setState(() {
+        searchResults = results;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al buscar: ${e.toString()}')),
+      );
+    }
+  }
+
+  void _onSearchChanged(String query) {
+    if (_debounceTimer?.isActive ?? false) {
+      _debounceTimer?.cancel();
+    }
+
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+      if (query.isNotEmpty) {
+        _searchGames(query);
+      } else {
+        setState(() {
+          isSearching = false;
+          searchResults.clear();
+        });
+      }
+    });
+  }
+
+  void _clearSearch() {
+    _searchController.clear();
+    setState(() {
+      isSearching = false;
+      searchResults.clear();
+    });
   }
 
   @override
@@ -93,11 +157,10 @@ class _HomePageState extends State<HomePage> {
               await Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder:
-                      (_) => PlatformSelectionScreen(
-                        prefsService: widget.prefsService,
-                        isInitialSetup: false,
-                      ),
+                  builder: (_) => PlatformSelectionScreen(
+                    prefsService: widget.prefsService,
+                    isInitialSetup: false,
+                  ),
                 ),
               );
               setState(() {
@@ -112,47 +175,100 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Carrusel de juegos populares
-            _buildSectionTitle('Populares'),
-            _buildGameSwiper(popularGames),
-
-            const SizedBox(height: 20),
-
-            // Mejores de 2024
-            _buildSectionTitle('Lo mejor de 2024'),
-            _buildHorizontalGameList(bestOf2024),
-
-            const SizedBox(height: 20),
-
-            // Mejor valorados
-            _buildSectionTitle('Mejor valorados'),
-            _buildHorizontalGameList(topRated),
-
-            const SizedBox(height: 20),
-
-            // Botón para ver todos los juegos
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (_) =>
-                              GameListScreen(prefsService: widget.prefsService),
-                    ),
-                  );
-                },
-                child: const Text('Ver todos los juegos'),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                ),
-              ),
+            GameSearchBar(
+              controller: _searchController,
+              focusNode: _searchFocusNode,
+              onSubmitted: _searchGames,
+              onClear: _clearSearch,
             ),
+
+            if (isSearching)
+              _buildSearchResults()
+            else
+              _buildNormalContent(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildSearchResults() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Resultados de búsqueda',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          if (searchResults.isEmpty)
+            const Center(child: Text('No se encontraron resultados'))
+          else
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: searchResults.length,
+              itemBuilder: (context, index) {
+                final game = searchResults[index];
+                return ListTile(
+                  leading: Image.network(
+                    game.imageUrl,
+                    width: 50,
+                    errorBuilder: (_, __, ___) =>
+                        const Icon(Icons.videogame_asset),
+                  ),
+                  title: Text(game.name),
+                  subtitle: Text('Rating: ${game.rating}'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => GameDetailScreen(gameId: game.id),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNormalContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle('Populares'),
+        _buildGameSwiper(popularGames),
+        const SizedBox(height: 20),
+        _buildSectionTitle('Lo mejor de 2024'),
+        _buildHorizontalGameList(bestOf2024),
+        const SizedBox(height: 20),
+        _buildSectionTitle('Mejor valorados'),
+        _buildHorizontalGameList(topRated),
+        const SizedBox(height: 20),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>
+                      GameListScreen(prefsService: widget.prefsService),
+                ),
+              );
+            },
+            child: const Text('Ver todos los juegos'),
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(double.infinity, 50),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -191,18 +307,18 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   game.imageUrl.isNotEmpty
                       ? ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.network(
-                          game.imageUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder:
-                              (_, __, ___) => const Icon(Icons.videogame_asset),
-                        ),
-                      )
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.network(
+                            game.imageUrl,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) =>
+                                const Icon(Icons.videogame_asset),
+                          ),
+                        )
                       : Container(
-                        color: Colors.grey[300],
-                        child: const Icon(Icons.videogame_asset, size: 50),
-                      ),
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.videogame_asset, size: 50),
+                        ),
                   Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
@@ -270,11 +386,10 @@ class _HomePageState extends State<HomePage> {
                         game.imageUrl,
                         fit: BoxFit.cover,
                         width: double.infinity,
-                        errorBuilder:
-                            (_, __, ___) => Container(
-                              color: Colors.grey[300],
-                              child: const Icon(Icons.videogame_asset),
-                            ),
+                        errorBuilder: (_, __, ___) => Container(
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.videogame_asset),
+                        ),
                       ),
                     ),
                   ),
@@ -283,9 +398,7 @@ class _HomePageState extends State<HomePage> {
                 Text(
                   game.name,
                   maxLines: 1,
-                  overflow:
-                      TextOverflow
-                          .ellipsis, // Corregir: usar overflow en lugar de max
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(fontSize: 12),
                 ),
                 Text(
