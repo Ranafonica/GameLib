@@ -61,7 +61,7 @@ class _GameListScreenState extends State<GameListScreen> {
                       (_) => PlatformSelectionScreen(
                         prefsService: widget.prefsService,
                         isInitialSetup: false,
-                      ),
+                      ), //AQUI
                 ),
               );
               setState(() {
