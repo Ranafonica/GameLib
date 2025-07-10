@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:proyecto3/main.dart';
 import 'package:proyecto3/screens/game_list_screen.dart';
 import '../constants/filters.dart';
-import '../Services/shared_preferences_services.dart';
+import '../services/shared_preferences_services.dart';
 
 class PlatformSelectionScreen extends StatefulWidget {
   final SharedPreferencesService prefsService;

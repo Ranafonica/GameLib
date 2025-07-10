@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper_view/flutter_swiper_view.dart';
-import 'package:proyecto3/Services/shared_preferences_services.dart';
+import 'package:proyecto3/services/shared_preferences_services.dart';
 import 'package:proyecto3/api/rawg_api.dart';
 import 'package:proyecto3/models/game.dart';
 import 'package:proyecto3/screens/game_detail_screen.dart';
 import 'package:proyecto3/screens/game_list_screen.dart';
 import 'package:proyecto3/screens/platform_selection_screen.dart';
+import 'package:proyecto3/screens/preferences_screen.dart';
 import 'package:proyecto3/widgets/search_bar.dart';
 
 class HomePage extends StatefulWidget {
@@ -111,7 +112,10 @@ class _HomePageState extends State<HomePage> {
         isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al buscar: ${e.toString()}')),
+        SnackBar(
+          content: Text('Error al buscar: ${e.toString()}'),
+          behavior: SnackBarBehavior.floating,
+        ),
       );
     }
   }
@@ -141,6 +145,11 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  Future<void> _refreshData() async {
+    setState(() => isLoading = true);
+    await _loadGames();
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
@@ -152,41 +161,47 @@ class _HomePageState extends State<HomePage> {
         title: const Text('Explorador de Juegos'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              _searchFocusNode.requestFocus();
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () async {
               await Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => PlatformSelectionScreen(
+                  builder: (_) => PreferencesScreen(
                     prefsService: widget.prefsService,
-                    isInitialSetup: false,
                   ),
                 ),
               );
-              setState(() {
-                isLoading = true;
-              });
-              await _loadGames();
+              _refreshData();
             },
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            GameSearchBar(
-              controller: _searchController,
-              focusNode: _searchFocusNode,
-              onSubmitted: _searchGames,
-              onClear: _clearSearch,
-            ),
+      body: RefreshIndicator(
+        onRefresh: _refreshData,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              GameSearchBar(
+                controller: _searchController,
+                focusNode: _searchFocusNode,
+                onSubmitted: _searchGames,
+                onClear: _clearSearch,
+              ),
 
-            if (isSearching)
-              _buildSearchResults()
-            else
-              _buildNormalContent(),
-          ],
+              if (isSearching)
+                _buildSearchResults()
+              else
+                _buildNormalContent(),
+            ],
+          ),
         ),
       ),
     );
@@ -198,13 +213,30 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Resultados de búsqueda',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => _clearSearch(),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Resultados para "${_searchController.text}"',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 16),
           if (searchResults.isEmpty)
-            const Center(child: Text('No se encontraron resultados'))
+            const Center(
+              child: Text(
+                'No se encontraron juegos',
+                style: TextStyle(fontSize: 16),
+              ),
+            )
           else
             ListView.builder(
               shrinkWrap: true,
@@ -212,23 +244,35 @@ class _HomePageState extends State<HomePage> {
               itemCount: searchResults.length,
               itemBuilder: (context, index) {
                 final game = searchResults[index];
-                return ListTile(
-                  leading: Image.network(
-                    game.imageUrl,
-                    width: 50,
-                    errorBuilder: (_, __, ___) =>
-                        const Icon(Icons.videogame_asset),
-                  ),
-                  title: Text(game.name),
-                  subtitle: Text('Rating: ${game.rating}'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => GameDetailScreen(gameId: game.id),
+                return Card(
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  child: ListTile(
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        game.imageUrl,
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                          width: 60,
+                          height: 60,
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.videogame_asset),
+                        ),
                       ),
-                    );
-                  },
+                    ),
+                    title: Text(game.name),
+                    subtitle: Text('⭐ ${game.rating.toStringAsFixed(1)}'),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => GameDetailScreen(gameId: game.id),
+                        ),
+                      );
+                    },
+                  ),
                 );
               },
             ),
@@ -257,8 +301,7 @@ class _HomePageState extends State<HomePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) =>
-                      GameListScreen(prefsService: widget.prefsService),
+                  builder: (_) => GameListScreen(prefsService: widget.prefsService),
                 ),
               );
             },
@@ -268,23 +311,27 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
+        const SizedBox(height: 20),
       ],
     );
   }
 
   Widget _buildSectionTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
       child: Text(
         title,
-        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        style: const TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
 
   Widget _buildGameSwiper(List<Game> games) {
     return SizedBox(
-      height: 200,
+      height: 220,
       child: Swiper(
         itemBuilder: (BuildContext context, int index) {
           final game = games[index];
@@ -299,20 +346,26 @@ class _HomePageState extends State<HomePage> {
             },
             child: Card(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
+                borderRadius: BorderRadius.circular(12.0),
               ),
-              elevation: 4,
+              elevation: 6,
+              margin: const EdgeInsets.symmetric(vertical: 8),
               child: Stack(
                 fit: StackFit.expand,
                 children: [
                   game.imageUrl.isNotEmpty
                       ? ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(12),
                           child: Image.network(
                             game.imageUrl,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) =>
-                                const Icon(Icons.videogame_asset),
+                            errorBuilder: (_, __, ___) => Center(
+                              child: Icon(
+                                Icons.videogame_asset,
+                                size: 50,
+                                color: Colors.grey[600],
+                              ),
+                            ),
                           ),
                         )
                       : Container(
@@ -321,7 +374,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                   Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(12),
                       gradient: const LinearGradient(
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
@@ -330,18 +383,37 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   Positioned(
-                    bottom: 10,
-                    left: 10,
-                    right: 10,
-                    child: Text(
-                      game.name,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                    bottom: 16,
+                    left: 16,
+                    right: 16,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          game.name,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            const Icon(Icons.star, color: Colors.amber, size: 16),
+                            const SizedBox(width: 4),
+                            Text(
+                              game.rating.toStringAsFixed(1),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -350,62 +422,81 @@ class _HomePageState extends State<HomePage> {
           );
         },
         itemCount: games.length,
-        viewportFraction: 0.8,
-        scale: 0.9,
+        viewportFraction: 0.85,
+        scale: 0.92,
         autoplay: true,
+        autoplayDelay: 5000,
       ),
     );
   }
 
   Widget _buildHorizontalGameList(List<Game> games) {
     return SizedBox(
-      height: 150,
+      height: 180,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         itemCount: games.length,
         itemBuilder: (context, index) {
           final game = games[index];
           return Container(
-            width: 120,
-            margin: const EdgeInsets.symmetric(horizontal: 8),
-            child: Column(
-              children: [
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => GameDetailScreen(gameId: game.id),
-                        ),
-                      );
-                    },
+            width: 140,
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(10),
+                      ),
                       child: Image.network(
                         game.imageUrl,
                         fit: BoxFit.cover,
-                        width: double.infinity,
-                        errorBuilder: (_, __, ___) => Container(
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.videogame_asset),
+                        errorBuilder: (_, __, ___) => Center(
+                          child: Icon(
+                            Icons.videogame_asset,
+                            size: 40,
+                            color: Colors.grey[600],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  game.name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 12),
-                ),
-                Text(
-                  '⭐ ${game.rating.toStringAsFixed(1)}',
-                  style: const TextStyle(fontSize: 12),
-                ),
-              ],
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          game.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            const Icon(Icons.star, color: Colors.amber, size: 14),
+                            const SizedBox(width: 4),
+                            Text(
+                              game.rating.toStringAsFixed(1),
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         },
