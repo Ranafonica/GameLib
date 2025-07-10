@@ -44,28 +44,33 @@ Para validar el correcto funcionamiento de la API de RAWG en la aplicación se r
 - `home_screen.dart` – Pantalla principal con juegos populares.
 - `search_screen.dart` – Pantalla con filtros y resultados de búsqueda.
 - `detail_screen.dart` – Pantalla de detalle de un juego.
-- `favorites_screen.dart` – Biblioteca personal (favoritos).  
+- `favorites_screen.dart` – Biblioteca personal (favoritos).
+- `platform_selection_screen.dart` – Pantalla para seleccionar plataforma.
+- `about_screen.dart` – Pantalla de créditos / información de la app.  
 *(Separar permite modularidad y navegación clara.)*
 
 ### 📂 widgets/
 - `game_card.dart` – Widget para mostrar juego en lista.
 - `filter_drawer.dart` – Widget para los filtros de búsqueda.
-- `search_bar.dart` – Widget para buscar.  
+- `search_bar.dart` – Barra de búsqueda.
+- `platform_button.dart` – Botón reutilizable para plataformas.
+- `custom_text_styles.dart` – Definiciones de estilo de texto.  
 *(Componentes reutilizables como tarjetas, buscador, filtros, etc.)*
 
 ### 📂 utils/
 - `api_key.dart` – Clave privada de la API.
 
 ### 📂 constants/
-- `filters.dart` – Listas fijas de géneros, edades, plataformas.  
-*(Formatos, helpers o listas constantes como restricciones de edad.)*
-
-### 📂 assets/
-- Evidencias de las pruebas de API.
-*(Screenshots de las evidencias, Logo e implementaciones futuras.)*
+- `filters.dart` – Listas fijas de géneros, edades, plataformas.
+  
 ### 📂 themes/
 - `theme.dart` – Estilos personalizados.
 - `util.dart` – Funciones auxiliares para el tema.
+  
+### 📂 assets/
+- Evidencias de las pruebas de API.
+*(Screenshots de las evidencias, Logo e implementaciones futuras.)*
+
 
 
 ## Llamada a la API - `rawg_api.dart`
@@ -113,6 +118,20 @@ Los juegos se organizan mediante un `ListView`, y cada elemento se presenta util
 
 
 ![Lista de juegos populares](assets/screenshot5.png)
+
+## Tema Escogido
+
+GameLib cuenta con un diseño personalizado que adapta su apariencia al modo claro u oscuro escogido en el apartado de "Preferencias". Se ha aplicado un tema consistente a la identidad digital del proyecto con tipografías, colores y espaciado uniforme relacionados al mundo de los videojuegos para mejorar la experiencia visual.
+
+### Modo Claro
+
+![Modo Claro](assets/light_home.png)
+
+### Modo Oscuro
+
+![Modo Oscuro](assets/dark_home.png)
+
+Los temas se gestionan mediante `theme.dart` y `util.dart`, permitiendo un cambio automático (al entrar) o manual (tras ingresar a las "Preferencias") según las preferencias del usuario o del sistema en donde se ejecute la aplicación.
 
 ## Lista de Actividades Pendientes para el Cierre del Piloto
 La realización de las siguientes actividades puede quedar a cambios dentro del desarrollo de la aplicación, por lo que esta es solamente una referencia actual de las decisiones más bien no un mandato
