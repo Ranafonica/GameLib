@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:proyecto3/Services/shared_preferences_services.dart';
 import 'package:proyecto3/models/game.dart';
 import 'package:proyecto3/screens/game_detail_screen.dart';
+import 'package:proyecto3/widgets/home_page_widgets.dart';
 
 class FavoritesScreen extends StatefulWidget {
   final SharedPreferencesService prefsService;
@@ -22,7 +23,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     _loadFavorites();
   }
 
-  // Cargar juegos favoritos desde SharedPreferences
   Future<void> _loadFavorites() async {
     final favorites = await widget.prefsService.getFavoriteGames();
     setState(() {
@@ -33,37 +33,37 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Juegos Favoritos')),
-      body:
-          isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : favoriteGames.isEmpty
-              ? const Center(child: Text('No tienes juegos favoritos aún'))
-              : ListView.builder(
-                itemCount: favoriteGames.length,
-                itemBuilder: (context, index) {
-                  final game = favoriteGames[index];
-                  return ListTile(
-                    leading: Image.network(
-                      game.imageUrl,
-                      width: 50,
-                      errorBuilder:
-                          (_, __, ___) => const Icon(Icons.videogame_asset),
+      appBar: AppBar(
+        title: const Text('Juegos Favoritos'),
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
+      ),
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(color: colorScheme.primary),
+            )
+          : favoriteGames.isEmpty
+              ? Center(
+                  child: Text(
+                    'No tienes juegos favoritos aún',
+                    style: TextStyle(
+                      color: colorScheme.onSurfaceVariant,
+                      fontSize: 16,
                     ),
-                    title: Text(game.name),
-                    subtitle: Text('Rating: ${game.rating}'),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => GameDetailScreen(gameId: game.id),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
+                  ),
+                )
+              : SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SectionTitleWidget(title: 'Tus Juegos Favoritos'),
+                      SearchGameGridWidget(games: favoriteGames),
+                    ],
+                  ),
+                ),
     );
   }
 }

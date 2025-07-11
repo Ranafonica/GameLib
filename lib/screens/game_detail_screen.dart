@@ -29,22 +29,30 @@ class _GameDetailScreenState extends State<GameDetailScreen> {
 
   // Obtener detalles del juego desde la API
   Future<void> fetchGameDetails() async {
-    final url = Uri.parse(
-      'https://api.rawg.io/api/games/${widget.gameId}?key=$rawgApiKey',
-    );
-    final response = await http.get(url);
+  final url = Uri.parse(
+    'https://api.rawg.io/api/games/${widget.gameId}?key=$rawgApiKey',
+  );
+  final response = await http.get(url);
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      setState(() {
-        gameData = data;
-        game = Game.fromJson(data); // Crear instancia de Game
-        isLoading = false;
-      });
-    } else {
-      throw Exception('Error al obtener los detalles del juego');
-    }
+  if (response.statusCode == 200) {
+    final data = json.decode(response.body);
+    setState(() {
+      gameData = data;
+      game = Game(
+        id: data['id'],
+        name: data['name'],
+        imageUrl: data['background_image'] ?? '',
+        rating: (data['rating'] as num).toDouble(),
+        platforms: (data['platforms'] as List<dynamic>?)
+            ?.map((p) => p['platform']['id'] as int)
+            .toList() ?? [],
+      );
+      isLoading = false;
+    });
+  } else {
+    throw Exception('Error al obtener los detalles del juego');
   }
+}
 
   @override
   Widget build(BuildContext context) {

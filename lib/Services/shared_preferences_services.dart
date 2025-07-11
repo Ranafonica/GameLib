@@ -59,12 +59,24 @@ class SharedPreferencesService {
 
   // Agregar un juego a favoritos
   Future<void> addFavoriteGame(Game game) async {
-    final favorites = await getFavoriteGames();
-    if (!favorites.any((g) => g.id == game.id)) {
-      favorites.add(game);
-      await setFavoriteGames(favorites);
-    }
+  final favorites = await getFavoriteGames();
+  
+  // Asegurarnos que la URL de la imagen esté correctamente guardada
+  final gameToSave = Game(
+    id: game.id,
+    name: game.name,
+    imageUrl: game.imageUrl.isNotEmpty 
+        ? game.imageUrl 
+        : 'https://via.placeholder.com/150', // URL por defecto si está vacía
+    rating: game.rating,
+    platforms: game.platforms,
+  );
+
+  if (!favorites.any((g) => g.id == game.id)) {
+    favorites.add(gameToSave);
+    await setFavoriteGames(favorites);
   }
+}
 
   // Eliminar un juego de favoritos
   Future<void> removeFavoriteGame(int gameId) async {

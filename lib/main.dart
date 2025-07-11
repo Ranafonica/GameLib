@@ -31,7 +31,6 @@ class _GameAppState extends State<GameApp> {
   bool _isLoading = true;
   bool _isOnline = true;
 
-  // 👇 Clave global para mostrar Snackbars sin errores
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
 
@@ -49,7 +48,6 @@ class _GameAppState extends State<GameApp> {
           _isOnline = isOnline;
         });
 
-        // 👇 Usar correctamente la clave global
         _scaffoldMessengerKey.currentState?.showSnackBar(
           SnackBar(
             content: Text(
@@ -87,7 +85,7 @@ class _GameAppState extends State<GameApp> {
     }
 
     return MaterialApp(
-      scaffoldMessengerKey: _scaffoldMessengerKey, // 👈 Aquí se asigna
+      scaffoldMessengerKey: _scaffoldMessengerKey,
       title: 'GameLib',
       theme: materialTheme.light(),
       darkTheme: materialTheme.dark(),
@@ -128,7 +126,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     _screens = [
       HomePage(prefsService: widget.prefsService),
       FavoritesScreen(prefsService: widget.prefsService),
-      AboutScreen(prefsService: widget.prefsService),
     ];
   }
 
@@ -147,18 +144,30 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         title: const Text('GameLib'),
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => AboutScreen(prefsService: widget.prefsService),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Inicio',
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite),
             label: 'Favoritos',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.info_outline),
-            label: 'Acerca de',
           ),
         ],
         currentIndex: _selectedIndex,
