@@ -7,6 +7,7 @@ import 'package:proyecto3/screens/about_screen.dart';
 import 'package:proyecto3/themes/theme.dart';
 import 'package:proyecto3/themes/util.dart';
 import 'package:proyecto3/Services/connection_service.dart';
+import 'package:proyecto3/screens/platform_selection_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -145,16 +146,39 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.info_outline),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => AboutScreen(prefsService: widget.prefsService),
-                ),
-              );
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert),
+            onSelected: (String value) {
+              if (value == 'about') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => AboutScreen(prefsService: widget.prefsService),
+                  ),
+                );
+              } else if (value == 'preferences') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PlatformSelectionScreen(
+                      prefsService: widget.prefsService,
+                      isInitialSetup: false,
+                      onThemeChanged: widget.onThemeChanged,
+                    ),
+                  ),
+                );
+              }
             },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'about',
+                child: Text('Acerca de'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'preferences',
+                child: Text('Preferencias'),
+              ),
+            ],
           ),
         ],
       ),

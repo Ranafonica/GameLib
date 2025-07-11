@@ -150,12 +150,8 @@ class _PlatformSelectionScreenState extends State<PlatformSelectionScreen> {
                         setState(() {
                           _selectedThemeMode = newValue;
                         });
-                        widget.onThemeChanged?.call(
-                          newValue,
-                        ); // Actualizar el tema
-                        widget.prefsService.setThemeMode(
-                          newValue,
-                        ); // Guardar preferencia
+                        widget.onThemeChanged?.call(newValue); // Esto ya está en tu código
+                        widget.prefsService.setThemeMode(newValue);
                       }
                     },
                     items: const [
