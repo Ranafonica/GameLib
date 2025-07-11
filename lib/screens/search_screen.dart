@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:proyecto3/api/rawg_api.dart';
 import 'package:proyecto3/models/game.dart';
-import 'package:proyecto3/screens/game_detail_screen.dart';
-import 'package:proyecto3/services/shared_preferences_services.dart';
+import 'package:proyecto3/widgets/home_page_widgets.dart'; // Importa HorizontalGameListWidget
+import 'package:proyecto3/Services/shared_preferences_services.dart';
 import 'package:proyecto3/widgets/search_bar.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -30,6 +30,7 @@ class _SearchScreenState extends State<SearchScreen> {
     super.dispose();
   }
 
+  // Busca juegos según la consulta
   Future<void> _searchGames(String query) async {
     if (query.isEmpty) {
       setState(() {
@@ -58,11 +59,13 @@ class _SearchScreenState extends State<SearchScreen> {
         SnackBar(
           content: Text('Error al buscar: ${e.toString()}'),
           behavior: SnackBarBehavior.floating,
+          backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );
     }
   }
 
+  // Aplica debounce a la entrada de búsqueda
   void _onSearchChanged(String query) {
     if (_debounceTimer?.isActive ?? false) {
       _debounceTimer?.cancel();
@@ -75,16 +78,24 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme =
+        Theme.of(context).colorScheme; // Accede a los colores del tema
+
     return Scaffold(
+      backgroundColor: colorScheme.surface, // Fondo consistente con HomePage
       appBar: AppBar(
         title: const Text('Buscar Juegos'),
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Barra de búsqueda
           GameSearchBar(
             controller: _searchController,
             focusNode: _searchFocusNode,
@@ -94,41 +105,38 @@ class _SearchScreenState extends State<SearchScreen> {
               setState(() => searchResults.clear());
             },
           ),
+          // Título de la sección de resultados
+          if (searchResults.isNotEmpty || _searchController.text.isNotEmpty)
+            const SectionTitleWidget(title: 'Resultados de búsqueda'),
+          // Contenido principal
           Expanded(
-            child: isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : searchResults.isEmpty
+            child:
+                isLoading
                     ? Center(
-                        child: Text(
-                          _searchController.text.isEmpty
-                              ? 'Ingresa un término de búsqueda'
-                              : 'No se encontraron resultados',
-                        ),
-                      )
-                    : ListView.builder(
-                        itemCount: searchResults.length,
-                        itemBuilder: (context, index) {
-                          final game = searchResults[index];
-                          return ListTile(
-                            leading: Image.network(
-                              game.imageUrl,
-                              width: 50,
-                              errorBuilder: (_, __, ___) =>
-                                  const Icon(Icons.videogame_asset),
-                            ),
-                            title: Text(game.name),
-                            subtitle: Text('Rating: ${game.rating}'),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => GameDetailScreen(gameId: game.id),
-                                ),
-                              );
-                            },
-                          );
-                        },
+                      child: CircularProgressIndicator(
+                        color: colorScheme.primary,
                       ),
+                    )
+                    : searchResults.isEmpty
+                    ? Center(
+                      child: Text(
+                        _searchController.text.isEmpty
+                            ? 'Ingresa un término de búsqueda'
+                            : 'No se encontraron resultados',
+                        style: TextStyle(
+                          color: colorScheme.onSurfaceVariant,
+                          fontSize: 16,
+                        ),
+                      ),
+                    )
+                    : SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: HorizontalGameListWidget(
+                          games: searchResults,
+                        ), // Usa widget reutilizable
+                      ),
+                    ),
           ),
         ],
       ),

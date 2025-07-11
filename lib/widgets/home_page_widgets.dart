@@ -203,7 +203,7 @@ class HorizontalGameListWidget extends StatelessWidget {
   }
 }
 
-// Widget reutilizable para mostrar resultados de búsqueda.
+// Widget reutilizable para mostrar resultados de búsqueda de manera visual
 class SearchResultsWidget extends StatelessWidget {
   final List<Game> searchResults;
 
@@ -211,8 +211,8 @@ class SearchResultsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme =
-        Theme.of(context).colorScheme; // Accede a los colores del tema
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -221,59 +221,142 @@ class SearchResultsWidget extends StatelessWidget {
         children: [
           Text(
             'Resultados de búsqueda',
-            style: TextStyle(
-              fontSize: 20,
+            style: textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
               color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 16),
+
           if (searchResults.isEmpty)
             Center(
               child: Text(
                 'No se encontraron resultados',
-                style: TextStyle(color: colorScheme.onSurfaceVariant),
+                style: textTheme.bodyLarge?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                ),
               ),
             )
+          else if (searchResults.length <= 3)
+            // Para pocos resultados, mostrar en un carrusel
+            GameSwiperWidget(games: searchResults)
           else
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: searchResults.length,
-              itemBuilder: (context, index) {
-                final game = searchResults[index];
-                return ListTile(
-                  leading: Image.network(
-                    game.imageUrl,
-                    width: 50,
-                    errorBuilder:
-                        (_, __, ___) => Icon(
-                          Icons.videogame_asset,
-                          color: colorScheme.primary, // Ícono de respaldo
-                        ),
-                  ),
-                  title: Text(
-                    game.name,
-                    style: TextStyle(color: colorScheme.onSurface),
-                  ),
-                  subtitle: Text(
-                    'Rating: ${game.rating}',
-                    style: TextStyle(color: colorScheme.onSurfaceVariant),
-                  ),
-                  onTap: () {
-                    // Navega a la pantalla de detalles del juego
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => GameDetailScreen(gameId: game.id),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
+            // Para muchos resultados, mostrar en un grid
+            SearchGameGridWidget(games: searchResults),
         ],
       ),
+    );
+  }
+}
+
+// Nuevo widget para mostrar resultados de búsqueda en grid
+class SearchGameGridWidget extends StatelessWidget {
+  final List<Game> games;
+
+  const SearchGameGridWidget({super.key, required this.games});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 0.75,
+      ),
+      itemCount: games.length,
+      itemBuilder: (context, index) {
+        final game = games[index];
+        return Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 2,
+          color: colorScheme.surfaceContainer,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => GameDetailScreen(gameId: game.id),
+                ),
+              );
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(12),
+                    ),
+                    child:
+                        game.imageUrl.isNotEmpty
+                            ? Image.network(
+                              game.imageUrl,
+                              fit: BoxFit.cover,
+                              errorBuilder:
+                                  (_, __, ___) => Center(
+                                    child: Icon(
+                                      Icons.videogame_asset,
+                                      size: 40,
+                                      color: colorScheme.primary,
+                                    ),
+                                  ),
+                            )
+                            : Container(
+                              color: colorScheme.surfaceContainerLow,
+                              child: Center(
+                                child: Icon(
+                                  Icons.videogame_asset,
+                                  size: 40,
+                                  color: colorScheme.primary,
+                                ),
+                              ),
+                            ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        game.name,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.onSurface,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(Icons.star, color: Colors.amber, size: 16),
+                          const SizedBox(width: 4),
+                          Text(
+                            game.rating.toStringAsFixed(1),
+                            style: textTheme.bodySmall?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
