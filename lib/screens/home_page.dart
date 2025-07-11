@@ -23,6 +23,7 @@ class _HomePageState extends State<HomePage> {
   List<Game> topRated = [];
   bool isLoading = true;
   bool _isOnline = true;
+  StreamSubscription<bool>? _connectionSubscription;
 
   // Variables para búsqueda
   List<Game> searchResults = [];
@@ -40,6 +41,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
+    _connectionSubscription?.cancel();
     _searchController.dispose();
     _searchFocusNode.dispose();
     _debounceTimer?.cancel();
@@ -48,15 +50,17 @@ class _HomePageState extends State<HomePage> {
 
   // Inicializa el listener de conectividad para actualizar la UI
   void _initConnectionListener() {
-    ConnectionService.onConnectionChanged.listen((isOnline) {
-      if (mounted) {
-        setState(() {
-          _isOnline = isOnline;
-        });
-        if (isOnline) {
-          _loadGames(); // Recarga los juegos al restaurar la conexión
-        }
-      }
+    _connectionSubscription = ConnectionService.onConnectionChanged.listen((
+      isOnline,
+    ) {
+      if (!mounted) return;
+
+      setState(() {
+        _isOnline = isOnline;
+      });
+
+      if (isOnline)
+        _loadGames(); // Esto también contiene setState, por eso el check es importante
     });
   }
 
@@ -71,6 +75,7 @@ class _HomePageState extends State<HomePage> {
       }
       return;
     }
+
     try {
       final List<int>? selectedPlatforms =
           await widget.prefsService.getSelectedPlatforms();
@@ -89,6 +94,7 @@ class _HomePageState extends State<HomePage> {
         ordering: '-rating',
       );
 
+      if (!mounted) return;
       setState(() {
         popularGames = popular.take(10).toList();
         bestOf2024 = best2024.take(10).toList();

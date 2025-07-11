@@ -361,6 +361,143 @@ class SearchGameGridWidget extends StatelessWidget {
   }
 }
 
+// Widget para mostrar todos los juegos en un grid con scroll infinito
+class AllGamesGridWidget extends StatefulWidget {
+  final List<Game> games;
+
+  const AllGamesGridWidget({super.key, required this.games});
+
+  @override
+  State<AllGamesGridWidget> createState() => _AllGamesGridWidgetState();
+}
+
+class _AllGamesGridWidgetState extends State<AllGamesGridWidget> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return GridView.builder(
+      controller: _scrollController,
+      padding: const EdgeInsets.all(16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 0.7,
+      ),
+      itemCount: widget.games.length,
+      itemBuilder: (context, index) {
+        final game = widget.games[index];
+
+        return Card(
+          color: colorScheme.surfaceContainer,
+          elevation: 3,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => GameDetailScreen(gameId: game.id),
+                ),
+              );
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Imagen del juego
+                ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(12),
+                  ),
+                  child: AspectRatio(
+                    aspectRatio: 1.5,
+                    child:
+                        game.imageUrl.isNotEmpty
+                            ? Image.network(
+                              game.imageUrl,
+                              fit: BoxFit.cover,
+                              errorBuilder:
+                                  (_, __, ___) => Center(
+                                    child: Icon(
+                                      Icons.videogame_asset,
+                                      size: 50,
+                                      color: colorScheme.primary,
+                                    ),
+                                  ),
+                            )
+                            : Container(
+                              color: colorScheme.surfaceContainerLow,
+                              child: Center(
+                                child: Icon(
+                                  Icons.videogame_asset,
+                                  size: 50,
+                                  color: colorScheme.primary,
+                                ),
+                              ),
+                            ),
+                  ),
+                ),
+                // Información del juego
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        game.name,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.onSurface,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Icon(Icons.star, color: Colors.amber, size: 20),
+                          const SizedBox(width: 4),
+                          Text(
+                            game.rating.toStringAsFixed(1),
+                            style: textTheme.bodyMedium?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                          const Spacer(),
+                          if (game.platforms.isNotEmpty)
+                            Text(
+                              '${game.platforms.length} plataforma${game.platforms.length > 1 ? 's' : ''}',
+                              style: textTheme.bodySmall?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
 // Widget reutilizable para el contenido principal de la página de inicio.
 class NormalContentWidget extends StatelessWidget {
   final List<Game> popularGames;
