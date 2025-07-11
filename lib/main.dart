@@ -6,6 +6,7 @@ import 'package:proyecto3/screens/favorites_screen.dart';
 import 'package:proyecto3/screens/about_screen.dart';
 import 'package:proyecto3/themes/theme.dart';
 import 'package:proyecto3/themes/util.dart';
+import 'package:proyecto3/Services/connection_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,14 +29,39 @@ class GameApp extends StatefulWidget {
 class _GameAppState extends State<GameApp> {
   late ThemeMode _themeMode;
   bool _isLoading = true;
+  bool _isOnline = true;
+
+  // 👇 Clave global para mostrar Snackbars sin errores
+  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
 
   @override
   void initState() {
     super.initState();
     _loadThemeMode();
+    _initConnectionListener();
   }
 
-  // Cargar el ThemeMode desde SharedPreferences
+  void _initConnectionListener() {
+    ConnectionService.onConnectionChanged.listen((isOnline) {
+      if (mounted) {
+        setState(() {
+          _isOnline = isOnline;
+        });
+
+        // 👇 Usar correctamente la clave global
+        _scaffoldMessengerKey.currentState?.showSnackBar(
+          SnackBar(
+            content: Text(
+              isOnline ? 'Conexión restablecida' : 'Estás en modo offline',
+            ),
+            backgroundColor: isOnline ? Colors.green : Colors.orange,
+          ),
+        );
+      }
+    });
+  }
+
   Future<void> _loadThemeMode() async {
     final themeMode = await widget.prefsService.getThemeMode();
     setState(() {
@@ -44,7 +70,6 @@ class _GameAppState extends State<GameApp> {
     });
   }
 
-  // Método para actualizar el ThemeMode
   void updateThemeMode(ThemeMode newThemeMode) {
     setState(() {
       _themeMode = newThemeMode;
@@ -55,7 +80,6 @@ class _GameAppState extends State<GameApp> {
   @override
   Widget build(BuildContext context) {
     final textTheme = createTextTheme(context, 'Roboto', 'Poppins');
-
     final materialTheme = MaterialTheme(textTheme);
 
     if (_isLoading) {
@@ -63,13 +87,15 @@ class _GameAppState extends State<GameApp> {
     }
 
     return MaterialApp(
+      scaffoldMessengerKey: _scaffoldMessengerKey, // 👈 Aquí se asigna
       title: 'GameLib',
       theme: materialTheme.light(),
       darkTheme: materialTheme.dark(),
       themeMode: _themeMode,
       home: MainNavigationScreen(
         prefsService: widget.prefsService,
-        onThemeChanged: updateThemeMode, // Pasar el callback
+        onThemeChanged: updateThemeMode,
+        isOnline: _isOnline,
       ),
     );
   }
@@ -78,11 +104,13 @@ class _GameAppState extends State<GameApp> {
 class MainNavigationScreen extends StatefulWidget {
   final SharedPreferencesService prefsService;
   final void Function(ThemeMode) onThemeChanged;
+  final bool isOnline;
 
   const MainNavigationScreen({
     super.key,
     required this.prefsService,
     required this.onThemeChanged,
+    required this.isOnline,
   });
 
   @override

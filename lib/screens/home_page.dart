@@ -8,6 +8,7 @@ import 'package:proyecto3/screens/game_detail_screen.dart';
 import 'package:proyecto3/screens/game_list_screen.dart';
 import 'package:proyecto3/screens/platform_selection_screen.dart';
 import 'package:proyecto3/widgets/search_bar.dart';
+import 'package:proyecto3/Services/connection_service.dart';
 
 class HomePage extends StatefulWidget {
   final SharedPreferencesService prefsService;
@@ -23,6 +24,7 @@ class _HomePageState extends State<HomePage> {
   List<Game> bestOf2024 = [];
   List<Game> topRated = [];
   bool isLoading = true;
+  bool _isOnline = true;
 
   // Variables para búsqueda
   List<Game> searchResults = [];
@@ -35,6 +37,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _loadGames();
+    _initConnectionListener();
   }
 
   @override
@@ -45,7 +48,33 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
+  //conexion
+  void _initConnectionListener() {
+    ConnectionService.onConnectionChanged.listen((isOnline) {
+      if (mounted) {
+        setState(() {
+          _isOnline = isOnline;
+        });
+
+        // Si volvemos a tener conexión, recargar los juegos
+        if (isOnline) {
+          _loadGames();
+        }
+      }
+    });
+  }
+
   Future<void> _loadGames() async {
+    // Verificar conexión antes de hacer cualquier llamada
+    final isOnline = await ConnectionService.hasInternetAccess();
+    if (!isOnline) {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+      return;
+    }
     try {
       final List<int>? selectedPlatforms =
           await widget.prefsService.getSelectedPlatforms();
@@ -87,6 +116,22 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _searchGames(String query) async {
+    // Verificar conexión antes de buscar
+    final isOnline = await ConnectionService.hasInternetAccess();
+    if (!isOnline) {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('No hay conexión a internet'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+      return;
+    }
     if (query.isEmpty) {
       setState(() {
         isSearching = false;
@@ -156,37 +201,32 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final colorScheme =
-        Theme.of(context).colorScheme; // Accediendo al ColorScheme del tema
+        Theme.of(context).colorScheme; // Accediendo al ColorScheme
 
     if (isLoading) {
       return Scaffold(
-        backgroundColor:
-            colorScheme
-                .surface, // Fondo del Scaffold usando el color de superficie
+        backgroundColor: colorScheme.surface,
         body: Center(
-          child: CircularProgressIndicator(
-            color: colorScheme.primary, // Indicador de carga con color primario
-          ),
+          child: CircularProgressIndicator(color: colorScheme.primary),
         ),
       );
     }
 
     return Scaffold(
-      backgroundColor:
-          colorScheme
-              .surface, // Fondo del Scaffold usando el color de superficie
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         title: const Text('Explorador de Juegos'),
-        backgroundColor:
-            colorScheme.primary, // Fondo de la AppBar con color primario
-        foregroundColor:
-            colorScheme.onPrimary, // Color del texto/iconos en la AppBar
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
         actions: [
+          // Icono de estado de conexión
+          Icon(
+            _isOnline ? Icons.wifi : Icons.wifi_off,
+            color: _isOnline ? Colors.green : Colors.orange,
+          ),
+          const SizedBox(width: 10),
           IconButton(
-            icon: Icon(
-              Icons.settings,
-              color: colorScheme.onPrimary,
-            ), // Color del ícono de ajustes
+            icon: Icon(Icons.settings, color: colorScheme.onPrimary),
             onPressed: () async {
               await Navigator.push(
                 context,
@@ -210,12 +250,33 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Mostrar mensaje de modo offline si no hay conexión
+            if (!_isOnline)
+              Container(
+                padding: const EdgeInsets.all(8),
+                color: Colors.orange,
+                width: double.infinity,
+                child: Row(
+                  children: [
+                    Icon(Icons.warning, color: Colors.white),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Modo offline - Conéctate para ver contenido actualizado',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            // Barra de búsqueda
             GameSearchBar(
               controller: _searchController,
               focusNode: _searchFocusNode,
               onSubmitted: _searchGames,
               onClear: _clearSearch,
             ),
+            // Contenido principal (búsqueda o normal)
             if (isSearching) _buildSearchResults() else _buildNormalContent(),
           ],
         ),
