@@ -9,15 +9,25 @@ class RawgApi {
   static Future<List<Game>> fetchPopularGames({
     List<int>? platformIds,
     String? ordering,
+    Map<String, String>? additionalParams, // Nuevo parámetro para filtros adicionales
   }) async {
     String url = '$baseUrl/games?key=$rawgApiKey&page_size=50';
 
+    // Filtro por plataformas
     if (platformIds != null && platformIds.isNotEmpty) {
       url += '&platforms=${platformIds.join(',')}';
     }
 
+    // Ordenamiento
     if (ordering != null) {
       url += '&ordering=$ordering';
+    }
+
+    // Parámetros adicionales (como géneros)
+    if (additionalParams != null) {
+      additionalParams.forEach((key, value) {
+        url += '&$key=$value';
+      });
     }
 
     final response = await http.get(Uri.parse(url));
@@ -47,11 +57,20 @@ class RawgApi {
   static Future<List<Game>> searchGames({
     required String query,
     List<int>? platformIds,
+    Map<String, String>? additionalParams, // Nuevo parámetro para filtros adicionales
   }) async {
     String url = '$baseUrl/games?key=$rawgApiKey&page_size=50&search=$query';
 
+    // Filtro por plataformas
     if (platformIds != null && platformIds.isNotEmpty) {
       url += '&platforms=${platformIds.join(',')}';
+    }
+
+    // Parámetros adicionales
+    if (additionalParams != null) {
+      additionalParams.forEach((key, value) {
+        url += '&$key=$value';
+      });
     }
 
     final response = await http.get(Uri.parse(url));
@@ -73,5 +92,18 @@ class RawgApi {
     } else {
       throw Exception('Error al buscar juegos: ${response.statusCode}');
     }
+  }
+
+  // Método adicional para buscar por género específico
+  static Future<List<Game>> fetchGamesByGenre({
+    required int genreId,
+    List<int>? platformIds,
+    String? ordering,
+  }) async {
+    return fetchPopularGames(
+      platformIds: platformIds,
+      ordering: ordering,
+      additionalParams: {'genres': genreId.toString()},
+    );
   }
 }

@@ -7,8 +7,15 @@ import 'package:proyecto3/widgets/home_page_widgets.dart'; // Importamos los wid
 
 class GameListScreen extends StatefulWidget {
   final SharedPreferencesService prefsService;
+  final Map<String, String>? initialFilters;
+  final String? title;
 
-  const GameListScreen({super.key, required this.prefsService});
+  const GameListScreen({
+    super.key,
+    required this.prefsService,
+    this.initialFilters,
+    this.title,
+  });
 
   @override
   State<GameListScreen> createState() => _GameListScreenState();
@@ -18,19 +25,23 @@ class _GameListScreenState extends State<GameListScreen> {
   List<Game> games = [];
   bool isLoading = true;
   bool hasError = false;
+  Map<String, String> _currentFilters = {};
 
   @override
   void initState() {
     super.initState();
+    _currentFilters = widget.initialFilters ?? {};
     loadGames();
   }
 
   Future<void> loadGames() async {
     try {
-      final List<int>? selectedPlatforms =
+      final List<int>? selectedPlatforms = 
           await widget.prefsService.getSelectedPlatforms();
+      
       final gameList = await RawgApi.fetchPopularGames(
         platformIds: selectedPlatforms,
+        additionalParams: _currentFilters,
       );
 
       if (!mounted) return;
