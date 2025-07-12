@@ -5,7 +5,7 @@ import 'package:proyecto3/api/rawg_api.dart';
 import 'package:proyecto3/models/game.dart';
 import 'package:proyecto3/screens/platform_selection_screen.dart';
 import 'package:proyecto3/Services/connection_service.dart';
-import 'package:proyecto3/widgets/home_page_widgets.dart'; // Importa widgets extraídos
+import 'package:proyecto3/widgets/home_page_widgets.dart';
 import 'package:proyecto3/widgets/search_bar.dart';
 
 class HomePage extends StatefulWidget {
@@ -31,12 +31,21 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
   Timer? _debounceTimer;
+  int? _selectedGenreId;
+  final List<Map<String, dynamic>> _genres = [
+    {'id': 4, 'name': 'Acción'},
+    {'id': 51, 'name': 'Indie'},
+    {'id': 3, 'name': 'Aventura'},
+    {'id': 5, 'name': 'RPG'},
+    {'id': 2, 'name': 'Estrategia'},
+    {'id': 7, 'name': 'Deportes'},
+  ];
 
   @override
   void initState() {
     super.initState();
-    _loadGames(); // Carga los juegos al inicializar
-    _initConnectionListener(); // Inicializa el listener de conectividad
+    _loadGames();
+    _initConnectionListener();
   }
 
   @override
@@ -48,31 +57,19 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  // Inicializa el listener de conectividad para actualizar la UI
   void _initConnectionListener() {
-    _connectionSubscription = ConnectionService.onConnectionChanged.listen((
-      isOnline,
-    ) {
+    _connectionSubscription = ConnectionService.onConnectionChanged.listen((isOnline) {
       if (!mounted) return;
 
-      setState(() {
-        _isOnline = isOnline;
-      });
-
-      if (isOnline)
-        _loadGames(); // Esto también contiene setState, por eso el check es importante
+      setState(() => _isOnline = isOnline);
+      if (isOnline) _loadGames();
     });
   }
 
-  // Carga los juegos desde la API según las plataformas seleccionadas
   Future<void> _loadGames() async {
     final isOnline = await ConnectionService.hasInternetAccess();
     if (!isOnline) {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
+      if (mounted) setState(() => isLoading = false);
       return;
     }
 
@@ -102,9 +99,7 @@ class _HomePageState extends State<HomePage> {
         isLoading = false;
       });
     } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
+      setState(() => isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error al cargar juegos: ${e.toString()}'),
@@ -114,14 +109,11 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // Busca juegos según la consulta
-  Future<void> _searchGames(String query) async {
+  Future<void> _searchGames({String query = '', int? genreId}) async {
     final isOnline = await ConnectionService.hasInternetAccess();
     if (!isOnline) {
       if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
+        setState(() => isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('No hay conexión a internet'),
@@ -131,7 +123,8 @@ class _HomePageState extends State<HomePage> {
       }
       return;
     }
-    if (query.isEmpty) {
+
+    if (query.isEmpty && genreId == null) {
       setState(() {
         isSearching = false;
         searchResults.clear();
@@ -147,9 +140,11 @@ class _HomePageState extends State<HomePage> {
     try {
       final List<int>? selectedPlatforms =
           await widget.prefsService.getSelectedPlatforms();
+      
       final results = await RawgApi.searchGames(
         query: query,
         platformIds: selectedPlatforms,
+        additionalParams: genreId != null ? {'genres': genreId.toString()} : null,
       );
 
       setState(() {
@@ -157,9 +152,7 @@ class _HomePageState extends State<HomePage> {
         isLoading = false;
       });
     } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
+      setState(() => isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error al buscar: ${e.toString()}'),
@@ -169,15 +162,20 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // Aplica debounce a la entrada de búsqueda
+  void _onGenreSelected(int genreId) {
+    setState(() {
+      _selectedGenreId = genreId == -1 ? null : genreId;
+      _searchController.clear();
+    });
+    _searchGames(genreId: _selectedGenreId);
+  }
+
   void _onSearchChanged(String query) {
-    if (_debounceTimer?.isActive ?? false) {
-      _debounceTimer?.cancel();
-    }
+    if (_debounceTimer?.isActive ?? false) _debounceTimer?.cancel();
 
     _debounceTimer = Timer(const Duration(milliseconds: 500), () {
       if (query.isNotEmpty) {
-        _searchGames(query);
+        _searchGames(query: query);
       } else {
         setState(() {
           isSearching = false;
@@ -187,12 +185,12 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // Limpia la búsqueda
   void _clearSearch() {
     _searchController.clear();
     setState(() {
       isSearching = false;
       searchResults.clear();
+      _selectedGenreId = null;
     });
   }
 
@@ -215,7 +213,6 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Advertencia de modo offline
             if (!_isOnline)
               Container(
                 padding: const EdgeInsets.all(8),
@@ -234,14 +231,15 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
-            // Barra de búsqueda
             GameSearchBar(
               controller: _searchController,
               focusNode: _searchFocusNode,
-              onSubmitted: _searchGames,
+              onSubmitted: (query) => _searchGames(query: query),
               onClear: _clearSearch,
+              genres: _genres,
+              onGenreSelected: _onGenreSelected,
+              selectedGenreId: _selectedGenreId,
             ),
-            // Contenido condicional: resultados de búsqueda o contenido normal
             if (isSearching)
               SearchResultsWidget(searchResults: searchResults)
             else
