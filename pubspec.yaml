@@ -45,6 +45,7 @@ dependencies:
   url_launcher: ^6.1.11
   internet_connection_checker: ^3.0.1
   cached_network_image: ^3.3.0
+  share_plus: ^7.0.0
 
 dev_dependencies:
   flutter_test:

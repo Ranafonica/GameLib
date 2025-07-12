@@ -6,7 +6,8 @@ import 'package:proyecto3/Services/shared_preferences_services.dart';
 import 'package:proyecto3/models/game.dart';
 import '../utils/api_key.dart';
 import '../constants/filters.dart';
-import 'game_list_screen.dart'; // Para mostrar los nombres de las plataformas
+import 'game_list_screen.dart';
+import 'package:share_plus/share_plus.dart';
 
 class GameDetailScreen extends StatefulWidget {
   final int gameId;
@@ -22,6 +23,23 @@ class _GameDetailScreenState extends State<GameDetailScreen> {
   bool isLoading = true;
   Game? game;
   final SharedPreferencesService _prefsService = SharedPreferencesService.prefsService;
+
+  void _shareGame() {
+    if (gameData == null) return;
+    
+    final String name = gameData!['name'] ?? 'Este increíble juego';
+    final String releaseDate = gameData!['released'] ?? 'próximamente';
+    final String rating = gameData!['rating']?.toStringAsFixed(1) ?? 'N/A';
+    final String gameUrl = 'https://rawg.io/games/${widget.gameId}'; // URL de RAWG
+    
+    final String shareText = '🎮 $name 🎮\n\n'
+        '📅 Fecha de lanzamiento: $releaseDate\n'
+        '⭐ Calificación: $rating/5\n\n'
+        '🔗 Más información: $gameUrl\n\n'
+        '¡Descúbrelo en GameLib!';
+
+    Share.share(shareText);
+  }
 
   @override
   void initState() {
@@ -106,6 +124,12 @@ void _searchByGenre(int genreId, String genreName) {
       appBar: AppBar(
         title: const Text('Detalles del Juego'),
         actions: [
+          if (game != null) 
+            IconButton(
+              icon: const Icon(Icons.share),
+              onPressed: _shareGame,
+              tooltip: 'Compartir juego', // Texto descriptivo al mantener presionado
+            ),
           if (game != null)
             FutureBuilder<bool>(
               future: _prefsService.isFavoriteGame(game!.id),
