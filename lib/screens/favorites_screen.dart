@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto3/Services/shared_preferences_services.dart';
 import 'package:proyecto3/models/game.dart';
-import 'package:proyecto3/screens/game_detail_screen.dart';
 import 'package:proyecto3/widgets/home_page_widgets.dart';
 
 class FavoritesScreen extends StatefulWidget {
@@ -36,34 +35,30 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Juegos Favoritos'),
-        backgroundColor: colorScheme.primary,
-        foregroundColor: colorScheme.onPrimary,
-      ),
-      body: isLoading
-          ? Center(
-              child: CircularProgressIndicator(color: colorScheme.primary),
-            )
-          : favoriteGames.isEmpty
+      body:
+          isLoading
               ? Center(
-                  child: Text(
-                    'No tienes juegos favoritos aún',
-                    style: TextStyle(
-                      color: colorScheme.onSurfaceVariant,
-                      fontSize: 16,
-                    ),
-                  ),
-                )
-              : SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SectionTitleWidget(title: 'Tus Juegos Favoritos'),
-                      SearchGameGridWidget(games: favoriteGames),
-                    ],
+                child: CircularProgressIndicator(color: colorScheme.primary),
+              )
+              : favoriteGames.isEmpty
+              ? Center(
+                child: Text(
+                  'No tienes juegos favoritos aún',
+                  style: TextStyle(
+                    color: colorScheme.onSurfaceVariant,
+                    fontSize: 16,
                   ),
                 ),
+              )
+              : SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SectionTitleWidget(title: 'Tus Juegos Favoritos'),
+                    SearchGameGridWidget(games: favoriteGames),
+                  ],
+                ),
+              ),
     );
   }
 }

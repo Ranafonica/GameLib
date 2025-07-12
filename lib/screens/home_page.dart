@@ -211,38 +211,6 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
-      appBar: AppBar(
-        title: const Text('Explorador de Juegos'),
-        backgroundColor: colorScheme.primary,
-        foregroundColor: colorScheme.onPrimary,
-        actions: [
-          // Ícono de estado de conexión
-          Icon(
-            _isOnline ? Icons.wifi : Icons.wifi_off,
-            color: _isOnline ? Colors.green : Colors.orange,
-          ),
-          const SizedBox(width: 10),
-          IconButton(
-            icon: Icon(Icons.settings, color: colorScheme.onPrimary),
-            onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder:
-                      (_) => PlatformSelectionScreen(
-                        prefsService: widget.prefsService,
-                        isInitialSetup: false,
-                      ),
-                ),
-              );
-              setState(() {
-                isLoading = true;
-              });
-              await _loadGames(); // Recarga juegos tras seleccionar plataformas
-            },
-          ),
-        ],
-      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -136,6 +136,65 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     });
   }
 
+  Widget _buildNavItem({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required int index,
+    required bool isSelected,
+    required ColorScheme colorScheme,
+    required double sizeFactor,
+  }) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => _onItemTapped(index),
+        child: Container(
+          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 50 * sizeFactor,
+                height: 50 * sizeFactor,
+                decoration: BoxDecoration(
+                  color:
+                      isSelected
+                          ? colorScheme.primary.withOpacity(0.2)
+                          : Colors.transparent,
+                  borderRadius: BorderRadius.circular(15),
+                  border:
+                      isSelected
+                          ? Border.all(color: colorScheme.primary, width: 2)
+                          : null,
+                ),
+                child: Icon(
+                  icon,
+                  size: 28 * sizeFactor,
+                  color:
+                      isSelected
+                          ? colorScheme.primary
+                          : colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  color:
+                      isSelected
+                          ? colorScheme.primary
+                          : colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -143,9 +202,17 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('GameLib'),
-        backgroundColor: colorScheme.primary,
+        backgroundColor: colorScheme.primary.withOpacity(0.8),
         foregroundColor: colorScheme.onPrimary,
         actions: [
+          // Ícono de estado de conexión
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Icon(
+              widget.isOnline ? Icons.wifi : Icons.wifi_off,
+              color: widget.isOnline ? Colors.green : Colors.orange,
+            ),
+          ),
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert),
             onSelected: (String value) {
@@ -153,53 +220,78 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => AboutScreen(prefsService: widget.prefsService),
+                    builder:
+                        (_) => AboutScreen(prefsService: widget.prefsService),
                   ),
                 );
               } else if (value == 'preferences') {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => PlatformSelectionScreen(
-                      prefsService: widget.prefsService,
-                      isInitialSetup: false,
-                      onThemeChanged: widget.onThemeChanged,
-                    ),
+                    builder:
+                        (_) => PlatformSelectionScreen(
+                          prefsService: widget.prefsService,
+                          isInitialSetup: false,
+                          onThemeChanged: widget.onThemeChanged,
+                        ),
                   ),
                 );
               }
             },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              const PopupMenuItem<String>(
-                value: 'about',
-                child: Text('Acerca de'),
-              ),
-              const PopupMenuItem<String>(
-                value: 'preferences',
-                child: Text('Preferencias'),
-              ),
-            ],
+            itemBuilder:
+                (BuildContext context) => <PopupMenuEntry<String>>[
+                  const PopupMenuItem<String>(
+                    value: 'about',
+                    child: Text('Acerca de'),
+                  ),
+                  const PopupMenuItem<String>(
+                    value: 'preferences',
+                    child: Text('Preferencias'),
+                  ),
+                ],
           ),
         ],
       ),
       body: _screens[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Inicio',
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
+        child: Container(
+          height: 90,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
+            color: colorScheme.surfaceContainerHighest,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                spreadRadius: 2,
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Favoritos',
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildNavItem(
+                context: context,
+                icon: Icons.home,
+                label: 'Inicio',
+                index: 0,
+                isSelected: _selectedIndex == 0,
+                colorScheme: colorScheme,
+                sizeFactor: 0.9,
+              ),
+              _buildNavItem(
+                context: context,
+                icon: Icons.favorite,
+                label: 'Favoritos',
+                index: 1,
+                isSelected: _selectedIndex == 1,
+                colorScheme: colorScheme,
+                sizeFactor: 0.9,
+              ),
+            ],
           ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: colorScheme.surface,
-        selectedItemColor: colorScheme.primary,
-        unselectedItemColor: colorScheme.onSurfaceVariant,
+        ),
       ),
     );
   }
