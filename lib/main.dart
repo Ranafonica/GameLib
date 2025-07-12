@@ -240,21 +240,34 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             },
             itemBuilder:
                 (BuildContext context) => <PopupMenuEntry<String>>[
-                  const PopupMenuItem<String>(
+                  PopupMenuItem<String>(
                     value: 'about',
-                    child: Text('Acerca de'),
+                    child: Row(
+                      children: const [
+                        Icon(Icons.info_outline, size: 20),
+                        SizedBox(width: 10),
+                        Text('Acerca de'),
+                      ],
+                    ),
                   ),
-                  const PopupMenuItem<String>(
+                  PopupMenuItem<String>(
                     value: 'preferences',
-                    child: Text('Preferencias'),
+                    child: Row(
+                      children: const [
+                        Icon(Icons.settings, size: 20),
+                        SizedBox(width: 10),
+                        Text('Preferencias'),
+                      ],
+                    ),
                   ),
                 ],
           ),
         ],
       ),
+
       body: _screens[_selectedIndex],
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
+      bottomNavigationBar: SafeArea(
+        minimum: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
         child: Container(
           height: 90,
           decoration: BoxDecoration(
