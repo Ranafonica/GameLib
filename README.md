@@ -184,7 +184,7 @@ Pantalla informativa sobre la app, los autores del proyecto y enlaces útiles co
 
 Esta sección sirve para informar al usuario sobre quienes desarrollaron la app y de donde ha sido sacada la información
 
-![Pantalla About](assets/about.png)
+![Pantalla About](assets/about1.png)
 
 Dentro de esta pantalla podemos observar los enlaces puestos debajo, cada uno tras ser pinchado te llevará a los siguientes links
 
@@ -212,11 +212,11 @@ GameLib cuenta con un diseño personalizado que adapta su apariencia al modo cla
 
 ### Modo Claro
 
-![Modo Claro](assets/light_home.png)
+![Modo Claro](assets/light_home1.png)
 
 ### Modo Oscuro
 
-![Modo Oscuro](assets/dark_home.png)
+![Modo Oscuro](assets/dark_home1.png)
 
 Los temas se gestionan mediante `theme.dart` y `util.dart`, permitiendo un cambio automático (al entrar) o manual (tras ingresar a las "Preferencias") según las preferencias del usuario o del sistema en donde se ejecute la aplicación.
 
@@ -269,6 +269,7 @@ Se adjunta el link de descarga donde podrás difrutar nuestra aplicación:
 Presentación utilizada para exponer el funcionamiento de la aplicación:
 
 [Ver presentación (PPT)](https://drive.google.com/file/d/ID_DEL_PPT/view?usp=sharing)
+
 [Ver Video (.MP4)](https://drive.google.com/file/d/ID_DEL_PPT/view?usp=sharing)
 
 Se adjunta el material audivisual sobre nuestra aplicación que contiene más información que la entregada de maera visual, sino que tambien acompañada de un video explicativo y una presentación sobre nuestro material.
