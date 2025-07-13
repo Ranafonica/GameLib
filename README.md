@@ -145,7 +145,7 @@ Pantalla que se abre al seleccionar un juego desde cualquier parte de la app. Mu
 
 Dentro de esta pantalla tambien podemos encontrar las categorías del juego, si uno pincha cualquiera de las categorías uno puede buscar títulos que compartan dicha similitud, esto es esencial para usuarios que no sepan mucho del mundo de los vidoejuegos y quieran adentrarse a nuevas experiencias de juego basado en títulos del mismo género
 
-![Categorías](assets/categoria.png)
+![Categorías](assets/categorias.png)
 
 En la esquina superior derecha podemos notar 2 botones, el botón de Favoritos y el botón de Compartir.
 Si pulsamos el de compartir, se creará un texto con la información con el título del juego, la fecha de lanzamiento, la calificación, y más información en la API que puede ser visitada en la página web
