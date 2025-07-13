@@ -133,6 +133,10 @@ GameLib cuenta con un diseño personalizado que adapta su apariencia al modo cla
 
 Los temas se gestionan mediante `theme.dart` y `util.dart`, permitiendo un cambio automático (al entrar) o manual (tras ingresar a las "Preferencias") según las preferencias del usuario o del sistema en donde se ejecute la aplicación.
 
+### Diagrama Wireframe
+
+![Wireframe final de GameLib](assets/Diagrama.jpg)
+
 ## Lista de Actividades Pendientes para el Cierre del Piloto
 La realización de las siguientes actividades puede quedar a cambios dentro del desarrollo de la aplicación, por lo que esta es solamente una referencia actual de las decisiones más bien no un mandato
 
