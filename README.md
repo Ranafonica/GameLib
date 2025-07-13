@@ -262,7 +262,7 @@ La clave API fue sacada directamente desde la página de RAWG.IO tras crear una 
 ## Descarga de APK
 
 Se adjunta el link de descarga donde podrás difrutar nuestra aplicación:
-[Descargar GameLib APK](https://github.com/Ranafonica/GameLib/releases/download/v1.0.0/app-release.apk)
+[Descargar GameLib APK](https://github.com/Ranafonica/GameLib/raw/main/releases/app-release.apk))
 
 ### Archivos audiovisuales del proyecto
 
