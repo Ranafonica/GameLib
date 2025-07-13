@@ -99,7 +99,7 @@ class AboutScreen extends StatelessWidget {
               context,
               icon: Icons.bug_report,
               title: 'Reportar un problema',
-              url: 'https://github.com/tu_usuario/tu_repositorio/issues',
+              url: 'https://github.com/Ranafonica/GameLib/issues/new',
             ),
             const SizedBox(height: 30),
             Center(
