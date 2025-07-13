@@ -24,6 +24,12 @@ class _GameDetailScreenState extends State<GameDetailScreen> {
   Game? game;
   final SharedPreferencesService _prefsService = SharedPreferencesService.prefsService;
 
+  @override
+  void initState() {
+    super.initState();
+    fetchGameDetails();
+  }
+  
   void _shareGame() {
     if (gameData == null) return;
     
@@ -41,29 +47,70 @@ class _GameDetailScreenState extends State<GameDetailScreen> {
     Share.share(shareText);
   }
 
-  @override
-  void initState() {
-    super.initState();
-    fetchGameDetails();
-  }
-
   Future<void> fetchGameDetails() async {
-    final url = Uri.parse(
+  if (mounted) setState(() => isLoading = true);
+
+  try {
+    final gameUrl = Uri.parse(
       'https://api.rawg.io/api/games/${widget.gameId}?key=$rawgApiKey',
     );
-    final response = await http.get(url);
+    final screenshotsUrl = Uri.parse(
+      'https://api.rawg.io/api/games/${widget.gameId}/screenshots?key=$rawgApiKey',
+    );
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
+    // Realiza ambas llamadas en paralelo
+    final responses = await Future.wait([
+      http.get(gameUrl),
+      http.get(screenshotsUrl),
+    ]);
+
+    if (!mounted) return;
+
+    if (responses[0].statusCode != 200) {
+      throw Exception('Failed to load game details');
+    }
+
+    final gameData = json.decode(responses[0].body);
+    List<String> screenshots = [];
+
+    // Procesar screenshots si la respuesta fue exitosa
+    if (responses[1].statusCode == 200) {
+      final screenshotsData = json.decode(responses[1].body);
+      if (screenshotsData['results'] != null) {
+        screenshots = (screenshotsData['results'] as List)
+            .map((s) => s['image'] as String?)
+            .whereType<String>()
+            .where((url) => url.isNotEmpty)
+            .toList();
+      }
+    }
+
+    if (mounted) {
       setState(() {
-        gameData = data;
-        game = Game.fromJson(data);
+        this.gameData = gameData;
+        game = Game.fromJson(gameData);
+        
+        // Actualiza solo las screenshots si se obtuvieron
+        if (screenshots.isNotEmpty) {
+          game = game!.copyWith(screenshots: screenshots);
+        }
+        
         isLoading = false;
       });
-    } else {
-      throw Exception('Error al obtener los detalles del juego');
+    }
+  } catch (e) {
+    debugPrint('Error fetching game details: $e');
+    if (mounted) {
+      setState(() => isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error loading game: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
+}
 
   // Método para obtener los nombres de las plataformas
   List<String> getPlatformNames() {
@@ -115,6 +162,117 @@ void _searchByGenre(int genreId, String genreName) {
   );
 }
 
+Widget _buildScreenshotsCarousel() {
+  if (game?.screenshots == null || game!.screenshots!.isEmpty) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 24),
+        Text(
+          'Capturas de Pantalla',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'No hay capturas disponibles para este juego',
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
+  }
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const SizedBox(height: 24),
+      Text(
+        'Capturas de Pantalla',
+        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      const SizedBox(height: 12),
+      SizedBox(
+        height: 200,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: game!.screenshots!.length,
+          physics: const BouncingScrollPhysics(),
+          itemBuilder: (context, index) {
+            final screenshotUrl = game!.screenshots![index];
+            return Container(
+              margin: EdgeInsets.only(
+                right: 16,
+                left: index == 0 ? 16 : 0,
+              ),
+              width: 300,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  screenshotUrl,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                            : null,
+                      ),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: Colors.grey[300],
+                      child: const Center(
+                        child: Icon(Icons.broken_image),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    ],
+  );
+}
+// Añadir esta nueva función para mostrar la imagen en pantalla completa
+void _showFullScreenImage(BuildContext context, String imageUrl) {
+  Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (context) => Scaffold(
+        backgroundColor: Colors.black,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ),
+        body: Center(
+          child: InteractiveViewer(
+            panEnabled: true,
+            minScale: 0.5,
+            maxScale: 3.0,
+            child: Image.network(
+              imageUrl,
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -154,24 +312,52 @@ void _searchByGenre(int genreId, String genreName) {
         ],
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Portada del juego
-                  if (gameData!['background_image'] != null)
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
+        ? const Center(child: CircularProgressIndicator())
+        : SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Imagen principal con sombra
+                if (gameData!['background_image'] != null)
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          blurRadius: 10,
+                          spreadRadius: 2,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
                       child: Image.network(
                         gameData!['background_image'],
                         width: double.infinity,
-                        height: 200,
+                        height: 220,
                         fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Container(
+                            height: 220,
+                            color: Colors.grey[300],
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ),
-                  const SizedBox(height: 16),
+                  ),
+                const SizedBox(height: 24),
 
                   // Título y rating
                   Row(
@@ -283,50 +469,11 @@ void _searchByGenre(int genreId, String genreName) {
                     gameData!['description_raw'] ?? 'No hay descripción disponible',
                     style: textTheme.bodyMedium,
                   ),
-                  const SizedBox(height: 24),
-
-                  // Sección de trailers (simulada)
-                  Text(
-                    'Trailers',
-                    style: textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  // Esto es un placeholder - en una app real usarías la API para obtener trailers
-                  _buildTrailerItem('Tráiler oficial', '2 min 14 sec'),
-                  _buildTrailerItem('Gameplay trailer', '1 min 30 sec'),
-                  _buildTrailerItem('Tráiler de lanzamiento', '1 min 14 sec'),
+                _buildScreenshotsCarousel(),
+                const SizedBox(height: 24),
                 ],
               ),
             ),
-    );
-  }
-
-  Widget _buildTrailerItem(String title, String duration) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Container(
-            width: 120,
-            height: 70,
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: const Icon(Icons.play_circle_fill, size: 40),
-          ),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-              Text(duration, style: TextStyle(color: Colors.grey[600])),
-            ],
-          ),
-        ],
-      ),
     );
   }
 }
