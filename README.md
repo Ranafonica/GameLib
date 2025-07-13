@@ -119,6 +119,100 @@ Los juegos se organizan mediante un `ListView`, y cada elemento se presenta util
 
 ![Lista de juegos populares](assets/screenshot5.png)
 
+## Pantallas de la Aplicación
+
+Se detallan las pantallas implementadas en la app, cada una con una función específica orientada a mejorar la experiencia de exploración y gestión de los títulos.
+
+---
+
+### Home (Inicio)
+
+La pantalla principal muestra una barra de búsquda (Search Bar) donde el usuario podrá escribir el nombre de un título o seleccionar una de las categhorías para buscar algun videojuego de interés. Más abajo se muestra un carrusel (swiper) con videojuegos populares obtenidos desde la API de RAWG. Debajo se presenta una lista vertical de juegos destacados, cada uno con su imagen, nombre y puntuación. Desde aquí se puede acceder al detalle de cada juego tras pinchar en las imágenes.
+
+![Pantalla Home](assets/home.png)
+
+---
+
+### Favoritos
+
+Permite al usuario guardar sus juegos favoritos en una biblioteca personal. Estos juegos se almacenan localmente mediante `SharedPreferences`, por lo que se mantienen entre sesiones. Desde aquí también se puede eliminar favoritos o acceder a su información completa.
+
+![Pantalla Favoritos](assets/favoritos.png)
+
+---
+
+### Detalle del Juego
+
+Pantalla que se abre al seleccionar un juego desde cualquier parte de la app. Muestra una imagen ampliada, nombre del título, puntuación, fecha de lanzamiento, compañía distribuidora, descripción completa, plataformas, géneros y capturas de pantalla. Toda esta información es obtenida dinámicamente desde la API.
+
+![Pantalla Detalle](assets/detalle.png)
+
+![Pantalla Detalle](assets/detalle2.png)
+
+
+Dentro de esta pantalla tambien podemos encontrar las categorías del juego, si uno pincha cualquiera de las categorías uno puede buscar títulos que compartan dicha similitud, esto es esencial para usuarios que no sepan mucho del mundo de los vidoejuegos y quieran adentrarse a nuevas experiencias de juego basado en títulos del mismo género
+
+![Categorías](assets/categoria.png)
+
+En la esquina superior derecha podemos notar 2 botones, el botón de Favoritos y el botón de Compartir.
+Si pulsamos el de compartir, se creará un texto con la información con el título del juego, la fecha de lanzamiento, la calificación, y más información en la API que puede ser visitada en la página web
+
+![Categorías](assets/compartir.png)
+
+---
+
+### Buscar
+
+Permite realizar búsquedas personalizadas utilizando el endpoint de búsqueda de RAWG. Incluye filtros por:
+- Géneros (Accion, aventura, indie, etc)
+- Nombre del título
+- Preferencias seleccionadas
+La lista de resultados se adapta automáticamente a los filtros aplicados.
+
+![Pantalla Buscar](assets/buscar.png)
+
+---
+
+### Preferencias
+
+Pantalla pensada para configurar opciones locales del usuario. Aquí se podrían agregar funcionalidades como:
+- Preferencia de consola principal (Playstation, Xbox, Nintendo, PC, Ios, Android, etc)
+- Modo de visualización (Claro o Oscuro)
+Estas configuraciones pueden almacenarse con `SharedPreferences`.
+
+![Pantalla Preferencias](assets/preferencias.png)
+
+---
+
+### About (Acerca de)
+
+Pantalla informativa sobre la app, los autores del proyecto y enlaces útiles como:
+- Página oficial de RAWG
+- Repositorio del proyecto en GitHub
+- Presentar algun fallo sobre la aplicación
+
+Esta sección sirve para informar al usuario sobre quienes desarrollaron la app y de donde ha sido sacada la información
+
+![Pantalla About](assets/about.png)
+
+Dentro de esta pantalla podemos observar los enlaces puestos debajo, cada uno tras ser pinchado te llevará a los siguientes links
+
+![RAWG](assets/api.png)
+
+![Repositorio](assets/repositorio.png)
+
+![Issues](assets/issues.png)
+
+---
+
+### Manejo Offline
+
+Es imprescindible el uso de internet para que la aplicación funcione, por lo tanto, si el usuario no llegase a estar conectado mientras está usando la aplicación, es importante saber manejar dichos casos, es por eso que implementamos el manejo del uso Offline dentro de la aplicación, donde se le notificará de manera visual que le usuario no se encuentra conectado en este momento y para seguir usando la app es necesario que se vuelva a conectar.
+
+![Issues](assets/offline.png)
+
+---
+
 ## Tema Escogido
 
 GameLib cuenta con un diseño personalizado que adapta su apariencia al modo claro u oscuro escogido en el apartado de "Preferencias". Se ha aplicado un tema consistente a la identidad digital del proyecto con tipografías, colores y espaciado uniforme relacionados al mundo de los videojuegos para mejorar la experiencia visual.
@@ -132,6 +226,10 @@ GameLib cuenta con un diseño personalizado que adapta su apariencia al modo cla
 ![Modo Oscuro](assets/dark_home.png)
 
 Los temas se gestionan mediante `theme.dart` y `util.dart`, permitiendo un cambio automático (al entrar) o manual (tras ingresar a las "Preferencias") según las preferencias del usuario o del sistema en donde se ejecute la aplicación.
+
+### Diagrama Wireframe
+
+![Wireframe final de GameLib](assets/Diagrama.jpg)
 
 ## Lista de Actividades Pendientes para el Cierre del Piloto
 La realización de las siguientes actividades puede quedar a cambios dentro del desarrollo de la aplicación, por lo que esta es solamente una referencia actual de las decisiones más bien no un mandato
