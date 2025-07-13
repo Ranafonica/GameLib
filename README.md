@@ -259,9 +259,10 @@ La realización de las siguientes actividades puede quedar a cambios dentro del 
 La clave API fue sacada directamente desde la página de RAWG.IO tras crear una cuenta dentro de la página y solicitando acceso a la API KEY que nos permitió trabajar directamente con esta API RES pública.
 [https://rawg.io/apidocs](https://rawg.io/apidocs)
 
-### Descarga de APK
+## Descargas
+## 📲 Descargar APK
+👉 [Descargar APK](https://github.com/Ranafonica/GameLib/releases/download/v1.0.0/app-release.apk)
 
-Se adjunta el link de descarga donde podrás difrutar nuestra aplicación:
 
 ### Link de Presentación y Video
 
