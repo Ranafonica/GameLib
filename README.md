@@ -143,9 +143,13 @@ Pantalla que se abre al seleccionar un juego desde cualquier parte de la app. Mu
 
 ![Pantalla Detalle](assets/detalle2.png)
 
+## Categorías
+
 Dentro de esta pantalla tambien podemos encontrar las categorías del juego, si uno pincha cualquiera de las categorías uno puede buscar títulos que compartan dicha similitud, esto es esencial para usuarios que no sepan mucho del mundo de los vidoejuegos y quieran adentrarse a nuevas experiencias de juego basado en títulos del mismo género
 
 ![Categorías](assets/categorias.png)
+
+## Compartir
 
 En la esquina superior derecha podemos notar 2 botones, el botón de Favoritos y el botón de Compartir.
 Si pulsamos el de compartir, se creará un texto con la información con el título del juego, la fecha de lanzamiento, la calificación, y más información en la API que puede ser visitada en la página web
@@ -184,9 +188,15 @@ Esta sección sirve para informar al usuario sobre quienes desarrollaron la app 
 
 Dentro de esta pantalla podemos observar los enlaces puestos debajo, cada uno tras ser pinchado te llevará a los siguientes links
 
+### Link RAWG
+
 ![RAWG](assets/api.png)
 
+### Link REPOSITORIO
+
 ![Repositorio](assets/repositorio.png)
+
+### Link REPORTAR ERROR
 
 ![Issues](assets/issues.png)
 
@@ -248,4 +258,12 @@ La realización de las siguientes actividades puede quedar a cambios dentro del 
 
 La clave API fue sacada directamente desde la página de RAWG.IO tras crear una cuenta dentro de la página y solicitando acceso a la API KEY que nos permitió trabajar directamente con esta API RES pública.
 [https://rawg.io/apidocs](https://rawg.io/apidocs)
+
+### Descarga de APK
+
+Se adjunta el link de descarga donde podrás difrutar nuestra aplicación:
+
+### Link de Presentación y Video
+
+Se adjunta el material audivisual sobre nuestra aplicación que contiene más información que la entregada de maera visual, sino que tambien acompañada de un video explicativo y una presentación sobre nuestro material.
 
