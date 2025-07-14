@@ -268,9 +268,7 @@ Se adjunta el link de descarga donde podrás difrutar nuestra aplicación:
 
 Presentación utilizada para exponer el funcionamiento de la aplicación:
 
-[Ver presentación (PPT)](https://drive.google.com/file/d/ID_DEL_PPT/view?usp=sharing)
-
-[Ver Video (.MP4)](https://drive.google.com/file/d/ID_DEL_PPT/view?usp=sharing)
+[Ver Video (.MP4)](https://drive.google.com/file/d/1QBnR8x7RoQ-DVouQI3TFmw-Y_QVifVb7/view?usp=sharing)
 
 Se adjunta el material audivisual sobre nuestra aplicación que contiene más información que la entregada de maera visual, sino que tambien acompañada de un video explicativo y una presentación sobre nuestro material.
 
